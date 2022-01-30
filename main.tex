@@ -1,0 +1,360 @@
+
+\documentclass[a4,10pt]{ctexart}
+
+\usepackage{ctex}
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts,amsmath,amscd,amssymb,amsthm}
+\usepackage{latexsym,bm}
+\usepackage{cite}
+\usepackage{mathtools,mathdots,graphicx,array}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{color}
+\usepackage{enumitem}
+\usepackage{mpdoc}
+\usepackage{diagbox}
+\usepackage{xcolor,tcolorbox,tikz,tkz-tab,mdframed,tikz-cd}
+\usepackage{framed}
+\usepackage{verbatim}
+\usepackage{extarrows}
+\usepackage{fontspec}
+\newcommand*{\dif}{\mathop{}\!\mathrm{d}}
+\newcommand*{\arsinh}{\mathop{}\!\mathrm{arsinh}}
+\newcommand*{\artanh}{\mathop{}\!\mathrm{artanh}}
+\newcommand*{\arcosh}{\mathop{}\!\mathrm{arcosh}}
+\newcommand*{\Li}{\mathop{}\!\textrm{Li}}
+
+
+\begin{document}
+\pagenumbering{roman}
+\title{非线性分析笔记}
+\author{math\_hyphen}
+\date{2022年1月}
+\maketitle
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+\newpage
+
+
+
+\section{度理论}
+
+\begin{lt}
+    设$\phi\in{C'(\mathbb{R},\mathbb{R})}$ 满足对$\forall{x}\in{\mathbb{R}}$，有$\phi'(x)>0$,如果$\phi(1)=0$. 证明：
+    \begin{equation}
+      \left\{\begin{aligned}
+      x^3-3xy^2+\phi(x) &= 1\\
+      -y^3 + 3x^2y &=0
+      \end{aligned}\right.  \label{a}
+    \end{equation}
+    上述方程组在$B(0,2)=\{(x,y)\in{\mathbb{R}^2}|x^2+y^2<4\}$上至少有3个解.
+\end{lt}
+  
+\begin{proof}
+    对$\forall(x,y)\in\overline{B(0,2)}$及$\forall{t\in[0,1]}$，定义
+    \begin{equation}
+      H(x,y,t) = (x^3-3xy^2+t\phi(x), -y^3+3x^2y)
+    \end{equation}
+    下面证明：$\forall{t}\in[0,1]$ 及 $(x,y)\in\partial{B(0,2)}$，有$H(x,y,t)\neq(1,0)$,否则, $\exists{t\in[0,1]}$及$(x,y)\in\partial{B(0,2)}$, s.t. $H(x,y,t)=(1,0)$,即
+    \begin{equation}
+      \left\{\begin{aligned}
+      x^3 - 3xy^2 + t\phi(x) &= 1\\
+      -y^3 + 3x^2y &= 0 \\
+      x^2 + y^2 &= 4
+      \end{aligned}\right. 
+    \end{equation}
+    可以计算出此时 $|t\phi(x)|\ge{7}$,与假设条件矛盾. 故 $\forall{t}\in[0,1]$及 $(x,y)\in{\partial{B(0,2)}}$, 有 $H(x,y,t)\neq(1,0)$.\\
+    因此，利用Brouwer度的同伦不变性，有
+    \begin{equation}
+      \deg(H(\cdot, 1), B(0,2), (1,0)) = \deg(H(\cdot, 0), B(0,2), (1,0))=3
+    \end{equation}
+    而显然$x=1, y=0$是方程组 \eqref{a} 的解，由于
+    \begin{equation}
+      J_{H(\cdot,1)}(x,y) = \left|\begin{matrix}
+      3x^2-3y^2+\phi'(x) & -6xy \\
+      6xy & -3y^2+3x^2
+      \end{matrix}\right|
+    \end{equation}
+    此时 $J_{H(\cdot, 1)}(1,0) = 9+3\phi'(1)>0$, 即 $x=1, y=0$是 $H(\cdot, 1)=(1,0)$在 $(1,0)$的一个充分小邻域 $B((1,0),\delta)$ 中的唯一解，并且 $\deg(H(\cdot, 1), B((1,0),\delta),(1,0))=1$.\\
+    由切除性知， $\deg(H(\cdot, 1),B(0,2)\backslash\overline{B((1,0),\delta)},(1,0)) =2 \neq{0}$. (注意到 $y=0$时， $\phi(x)+x^3=1$, $x=1$是该方程的解，并且 $\phi'(x)+3x^1>0, \forall{x\in{\mathbb{R}}}$, 从而在$y=0$这条直线上， $x=1$是该方程的唯一解.)故，由Kronecker存在性定理知， $\exists(x,y)\in{B(0,2)\backslash\overline{B((1,0), \delta)}}$, s.t. $H(x,y,1)=(1,0)$, 并且 $y\neq{0}$. 注意到此时 $(x,-y)$也是方程 (\ref{a})的解. 因此，方程组在 $B(0,2)$ 中至少有三个解.
+\end{proof}
+\begin{lt}
+  设 $\Omega\in\mathbb{R}^n$ 是有界趋于， $J\in\mathbb{R}$是区间， $f:J\times\Omega\to\mathbb{R}^n$是连续的，任意给定的 $(t_0, u_0)\in{J\times\Omega}$,讨论如下初值问题：
+  \begin{equation}
+    \left\{\begin{aligned}
+    \frac{\dif{u}}{\dif{t}} &= f(t,u), t\in{J} \\
+    u(t_0) & =u_0
+    \end{aligned}\right. \label{b}
+  \end{equation}
+  如果 $f$ 关于 $u$ 是 Lipschitz 连续，问题 (\ref{b}) 存在唯一连续解；如果 $f$ 关于 $u$ 不是Lipschitz 连续，此时问题 (\ref{b}) 存在连续解，但是不一定唯一。
+\end{lt}
+\begin{lt}
+  \begin{equation}
+    \left\{\begin{aligned}
+      &\frac{\dif{u}}{\dif{t}} = u^{\frac{2}{3}}, t\in{J} \\ 
+      &u(t_0) = 0
+    \end{aligned}\right.
+  \end{equation}
+\end{lt}
+
+\begin{dl}{Krasnoselskii-Perov}{}
+  设 $X$ 是Banach空间， $\Omega\in{X}$ 是有界开集， $f=I-F:\overline{\Omega}\to{X}$ 是全连续场， 假设下列条件成立：
+  \begin{enumerate}
+    \item 对 $\forall{\varepsilon}>0$, 存在全连续映射 $F_{\varepsilon}:\overline{\Omega}\to{X}$, s.t. $\forall{u}\in\overline{\Omega}$,有
+      \begin{equation}
+        \Vert{F_{\varepsilon}(u)-F(u)}\Vert < \varepsilon
+      \end{equation}
+    \item 当 $b\in{X}$且 $||b||<\varepsilon$, 方程 $u=F_{\varepsilon}(u)+b$ 至多有一个解.
+  \end{enumerate}
+  如果 $0\notin{f(\partial{\Omega})}$ 且 $\deg(f,\Omega, 0)\neq{0}$,则解集合 $S=\{u\in\Omega\left|f(u)=0\right.\}$ 是连通的.
+\end{dl}
+
+\begin{proof}
+  $f$为全连续场得出： $f$固有且闭\\
+  由 $\deg(f,\Omega, 0)\neq{0}$ 知 $S\neq{\emptyset}$, 且 $S=f^{-1}(\{0\})$是紧集. 如果 $S$不是连通的，那么 $S$可以表示为两个非空不交闭集的并，而紧集的任何闭子集都是紧集，所以可知此时 $S$可以表示为两个非空不交紧集的并， 从而，存在两个非空的开集 $U,V$ 满足 
+  $$\overline{U}\cap\overline{V} = \emptyset, \quad U\cup{V}\supset{S}, \quad S\cap{U}\neq{\emptyset}, \quad S\cap{V}\neq\emptyset$$
+  由 $S\cap{U}\neq\emptyset$ 知， $\exists{u}\in{S\cap{U}}$, 从而有 $f(u)=0$, 即 $u=F(u)$. 对 $\forall{\varepsilon}>0, \forall{v}\in\overline{V}$, 定义
+  \begin{equation}
+    f_{\varepsilon}:=v-F_{\varepsilon}(v)-(u-F_{\varepsilon}(u))
+  \end{equation}
+  起哄 $F_{\varepsilon}$由条件(1)给出. 容易验证此时， $u\in{U}$是 $f_{\varepsilon}(v)=0$在 $\Omega$中的唯一解.\\ 
+  对 $\forall{v}\in\overline{V},\forall{t}\in[0,1]$, 令
+  \begin{equation}
+    H(t,v) = tf_{\varepsilon}(v) + (1-t)f(v)
+  \end{equation}
+  由于 $V$是 $S$的一个闭连通分支的开邻域及 $0\in{f(S)}$, 从而 $0\notin{f(\partial{V})}$. 由 $f$是闭的可知， $f(\partial{V})$也是闭的，于是，存在 $\alpha>0$, s.t. $\mathrm{dist}(0, f(\partial{V}))\ge\alpha>0$.\\ 
+  对 $\forall{t}\in[0,1], v\in\partial{V}$, 有：
+  \[
+  \begin{aligned}
+  \Vert{H(t,v)}\Vert &=  \Vert{f(v)+t(f_{\varepsilon}(v)-f(v))}\Vert \ge \Vert{f(v)}\Vert - t \Vert{f_{\varepsilon}(v)-f(v)}\Vert\\ 
+  &\ge \Vert{f(v)}\Vert - \Vert{v-F_{\varepsilon}(v)-(F(u)-F_{\varepsilon}(u))-(v-F(v))}\Vert\\ 
+  &\ge \Vert{f(v)}\Vert - 2 \Vert{F(v)-F_{v\varepsilon}(v)}\Vert\\ 
+  &\ge \alpha - 2\varepsilon
+  \end{aligned}  
+  \]
+  取 $0<\varepsilon<\frac{\alpha}{4}$, 则对 $\forall{v}\in\partial{V},\forall{t}\in[0,1]$,有
+  $$\Vert{H(t,v)}\Vert\ge\frac{\alpha}{2}>0 \Rightarrow \forall{t}\in[0,1], 0\notin{H(t,\partial{V})}$$
+  由 Leray-Schauder 度的同伦不变性可知， $\deg(H(t, \cdot), V, 0)$有意义且不依赖于 $t$,从而，有
+  \begin{equation}
+    \deg(f,V,0) = \deg(H(0,\cdot),V,0) = \deg(H(1,\cdot), V, 0) = \deg(f_{\varepsilon},V,0)
+  \end{equation}
+  由 $u\in{U}$是 $f_{\varepsilon}(v)=0$在 $\Omega$中的唯一解可知 $f_{\varepsilon}(v)=0$在 $V$中无解，得出 $\deg(f_{\varepsilon}, V, 0)=0$， 即有 $\deg(f,V,0)=0$.\\ 
+  类似地， 证明 $\deg(f,U,0)=\deg(f_{\varepsilon},U,0)=0$. \\
+  由 Leray-Schauder 度的切除性及区域可加性知：
+  \[
+  \begin{aligned}
+  0 \neq \deg(f,\Omega,0) &= \deg(f,U\cup{V},0) \\ 
+  & = \deg(f,U,0) + \deg(f,V,0)=0
+  \end{aligned}  
+  \]
+  矛盾，故集合 $S$是连通的.
+\end{proof}
+
+
+
+\subsection{Leray-Schauder不动点定理}
+
+\begin{lt}
+设 $H=l^2, B=\{x\in{H}, \Vert{x}\Vert\le{1}\}$ 定义 $f:B\to{B}, f(x)=\left(\sqrt{1-\Vert{x}\Vert},x_1, x_2,\cdots\right)$, 则 $f$ 在 $B$ 上是一致连续的且 $f(B)\subset{B}$. 但是该映射并没有不动点.
+\end{lt}
+
+\begin{yl}
+  设 $\Omega$ 是实线性赋范空间 $X$ 中的有界开集， $F:\overline{\Omega}\to{X}$ 全连续，对 $\forall{x}\in\overline{\Omega}$及 $t\in[0,1]$, 定义 $G(x,t)=tF(x)$, 则 $G:\overline{\Omega}\times[0,1]\to{X}$ 是两变元全连续的.
+\end{yl}
+
+\begin{proof}
+  1. $\forall\{t_n\}\subset[0,1]$及 $\{x_n\}\subset\overline{\Omega}$ 是有界序列。由假设知, $\exists\{F(x_{n_j})\}\subset\{F(x_n)\}$ 及 $y\in{X}$, s.t. $F(x_{n-j})\to{y}$, $t_{n_j}\to{t_0}$.
+可以得到 $t_{n_j}F(x_{n_j})\to{t_0y} \Rightarrow G(x_{n_j},t_{n_j})\to{t_0y}$
+推出 $G$ 是紧映射.\\
+2. if $t_n\to{t_0}, x_n\to{x_0}\Rightarrow t_nF(x_n)\to{t_0F(x_0)}$
+\end{proof}
+
+
+\begin{dl}{Leray-Schauder不动点}{}
+  设 $\Omega\subset{X}$ 是实线性赋范空间 $X$ 中包含原点的有界开集， $F:\overline{\Omega}\to{X}$ 全连续映射且满足 Leray-Schauder 边界条件：对 
+  $\forall{x}\in\partial{\Omega}$ 及 $\lambda>1$,有 $F(x)\neq{\lambda{x}}$，则 $F$ 在 $\overline{\Omega}$ 上至少有一个不动点.
+\end{dl}
+\begin{zy}
+  \begin{enumerate}
+    \item Leray-Schauder 边界条件的几何意义是：当$x\in\partial{\Omega}$时，$F(x)$不在$\{tx|t>1\}$上；
+    \item Leray-Schauder 边界条件也可以写为 $\forall{x}\in\partial{\Omega}$及 $\mu\in[0,1)$,有$x\neq\mu{F(x)}$,即当$\mu\in[0,1)$时，如果方程$x=\mu{F(x)}$在$\overline{\Omega}$上有解，则$x$一定在 $\Omega$的内部.
+  \end{enumerate}
+\end{zy}
+\begin{proof}
+如果 $x\in{\partial\Omega}$, s.t. $F(x)=x$, 则结论显然成立.\\
+不妨假设 $\forall{x}\in \partial\Omega$,有 $F(x)\neq{x}$. 对$\forall{x}\overline{\Omega}$及 $t\in[0,1]$, 令 $h_t(x)=x-tF(x)$, 则由假设知，\\
+\begin{enumerate}
+  \item 当 $o<t<1$时，对 $\forall{x}\in \partial\Omega$,有 $h_t(x)\neq{0}$
+  \item 当 $t=0$时， 对$\forall{x}\in \partial\Omega$,有 $h_0(x)=x\neq{0}$
+\end{enumerate}
+利用 Leray-Schauder 度的同伦不变性知：
+\[ 
+  \begin{aligned}
+    \deg({I-F},{\Omega}, {0}) &= \deg({h_1},{\Omega}, {0})\\
+    &= \deg({h_0},{\Omega}, {0})\\
+    &= \deg({I},{\Omega}, {0}) \\
+    &= 1 \neq{0}    
+  \end{aligned} 
+\]
+由 Kronecker 存在性定理知， $\exists{x}\in\Omega$ s.t. $x-F(x)=0$, i.e. $F(x)=x$
+\end{proof}
+
+\begin{tl}{}
+  设 $\Omega\subset{X}$ 是实线性赋范空间 $X$ 中含有原点的有界开集， $F:\overline{\Omega}\to{X}$是全连续的. 如果下列条件之一成立：
+  \begin{enumerate}
+    \item (Rothe条件) 对 $\forall{x}\in\partial\Omega$,有 $\left\|{F(x)}\right\|\le \left\|{x}\right\|$
+    \item (Altman条件) 对 $\forall{x}\in \partial\Omega$,有 $\left\|{x-F(x)}\right\|^2\ge \left\|{F(x)}\right\|^2 - \left\|{x}\right\|^2$
+    \item (Krasnoselskii条件) 设 $X$是内积空间，对 $\forall{x}\in \partial\Omega$,有 $(F(x),x)\le \left\|{x}\right\|^2$
+  \end{enumerate}
+  则 $F$ 在 $\overline{\Omega}$ 上有不动点.
+\end{tl}
+\begin{proof}
+  Leray-Schauder边界条件： $\forall{x}\in \partial\Omega$及 $\forall{\lambda}>1$,有 $F(x)\neq{\lambda{x}}$. 如果存在 $x\in \partial\Omega$ 及 $\lambda>1$, s.t. $F(x)=\lambda{x}$,则
+  \begin{enumerate}
+    \item $\left\|{F(x)}\right\|=\left\|{\lambda{x}}\right\|=\lambda \left\|{x}\right\|>\left\|{x}\right\|$,这与 $\left\|{F(x)}\right\|\le \left\|{x}\right\|$ 矛盾.
+    \item 由边界条件推出与已知条件矛盾！
+    \item $(F(x),x)=(\lambda{x},x)=\lambda \left\|{x}\right\|^2>\left\|{x}\right\|^2$,这与$(F(x),x)\le \left\|{x}\right\|^2$矛盾.
+  \end{enumerate}
+  综上所述，以上三个条件之一满足时， $F$在$\overline{\Omega}$上有不动点.
+\end{proof}
+
+\begin{tl}{}
+  设 $\Omega\subset{X}$是实线性赋范空间 $X$中的有界闭凸集且包含内点. $F:\Omega\to{X}$是全连续的且 $F(\partial\Omega)\subset\Omega$,则 $F$在$\Omega$上有不动点.
+\end{tl}
+\begin{proof}
+  由 $\Omega$ 有内点，不妨假设 $0$ 是$\Omega$ 的内点，否则，用 $\Omega-\{x_0\}$ 及$F(x+x_0)-x_0$ 来代替 $\Omega$ 和$F(x)$. 由于 $F(\partial\Omega)\subset\Omega$及 $\Omega$的凸性，故对$\forall{x}\in \partial\Omega$及 $\forall{\lambda}>1$,有
+  \[
+  \begin{aligned}
+    \frac{\lambda-1}{\lambda}\cdot{0}+\frac{F(x)}{\lambda}\in\dot{\Omega} &\Rightarrow \text{对} \forall{x}\in \partial\Omega \text{及} \lambda>1, \text{有} \frac{F(x)}{\lambda}\in\dot{\Omega}\\
+    &\Rightarrow \text{对} \forall{x}\in \partial\Omega\text{及} \lambda>1,\text{有} F(x)\neq{\lambda{x}}  
+  \end{aligned}
+  \]
+  由 Leray-Schauder 不动点定理知， $F$ 在 $\Omega$ 上有不动点.
+\end{proof}
+
+\begin{tl}{}
+  设 $\Omega$是实线性赋范空间 $X$中的有界开集， $F:\overline{\Omega}\to{X}$是全连续的. 如果存在$x_0\in\Omega$, s.t. 对$\forall{x}\in \partial\Omega$及$\alpha>1$有：
+  \[F(x)-x_0\neq\alpha(x-x_0)\]
+  则 $F$ 在 $\overline{\Omega}$上有不动点.
+\end{tl}
+\begin{proof}
+  令 $\Omega'=\Omega-\{x_0\}\Rightarrow{x}\in\Omega'$ =nnnnkkhdefehfhhasjfasjfasfasjfgasjgfajfgajfaf=
+\end{proof}
+''''''
+
+\begin{yd}{这是一个约定}{}
+              
+约定的内容.
+\end{yd}
+
+上述就是一些文本了. 使用的代码是
+\begin{lstlisting}{language=latex}
+\begin{yd}{这是一个约定}{}
+              
+约定的内容.
+\end{yd}
+\end{lstlisting}
+
+\begin{zs}
+        
+这是一个注释
+    
+\end{zs}
+    
+\begin{xt}
+        
+这是一个习题.
+    
+\end{xt}
+    
+\begin{lt}
+        
+这是一个问题.
+    
+\end{lt}
+
+\begin{yl}
+        
+这是一个引理.
+    
+\end{yl}
+
+\begin{dl}{A}{}
+        
+这是一个定理.
+    
+\end{dl}
+    
+\begin{tl}{A}{}
+        
+这是一个推论.
+    
+\end{tl}
+
+\begin{dy}{A}{}
+        
+这是一个定义.
+    
+\end{dy}
+
+\begin{jl}{A}{}
+        
+这是一个结论.
+    
+\end{jl}
+
+\begin{dl}{A}{}
+        
+这是一个命题.
+    
+\end{dl}
+    
+\begin{ti}{A}{}
+        
+这是一个题目.
+    
+\end{ti}
+
+\begin{cx}{A}{}
+        
+这是一个猜想.
+    
+\end{cx}
+
+\begin{zy}
+        
+这是注意.
+    
+\end{zy}
+
+\begin{ts}
+        
+这是一点提示.
+    
+\end{ts}
+
+\begin{lt}
+        
+这是一个例题.
+    
+\end{lt}
+
+\begin{proof}
+你还可以加一点证明. 
+\end{proof}
+
+我们注意到, 所有的数学公式将自动转换成行间公式的大小, 比如${1\over 2^k}$, $\sum_{i=0}^{998244353}i$. 
+
+\section{起源与未来的修改计划}
+
+起源与hkmod的模板, 添加了一些常用的标志词. 可以在mpdoc.sty里面进行更改, 相信根据注释你也会. 
+
+使用愉快! 
+    
+    
+    
+    
+   
+
+\end{document}

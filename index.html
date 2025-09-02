@@ -61,6 +61,16 @@
         .stagger-1 { animation-delay: 0.1s; }
         .stagger-2 { animation-delay: 0.2s; }
         .stagger-3 { animation-delay: 0.3s; }
+        .tag-filter.active {
+            background-color: rgba(139, 69, 19, 0.3) !important;
+            color: #8B4513;
+            font-weight: 600;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+        }
+        .note-card {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body class="bg-warm-bg text-text-main min-h-screen">
@@ -79,21 +89,13 @@
     <!-- Hero Section -->
     <section class="py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-5xl font-bold text-text-main mb-6 fade-in">📚 知识的花园</h2>
+            <h2 class="text-5xl font-bold text-text-main mb-6 fade-in">📚 math_hyphen的随记</h2>
             <p class="text-xl text-text-light mb-8 leading-relaxed fade-in stagger-1">
                 这里收录了我在学习过程中整理的各种笔记和思考。<br>
                 每一篇都是对知识的深入探索，希望能为你的学习之路带来启发。
             </p>
-            <div class="flex justify-center space-x-4 fade-in stagger-2">
-                <div class="bg-warm-secondary/20 px-4 py-2 rounded-full text-sm font-medium">
-                    🧠 深度学习
-                </div>
-                <div class="bg-warm-accent/20 px-4 py-2 rounded-full text-sm font-medium">
-                    📐 数学物理
-                </div>
-                <div class="bg-warm-primary/20 px-4 py-2 rounded-full text-sm font-medium">
-                    🔬 理论研究
-                </div>
+            <div id="tag-filters" class="flex justify-center space-x-4 fade-in stagger-2">
+                <!-- 标签按钮将通过JavaScript动态生成 -->
             </div>
         </div>
     </section>
@@ -103,58 +105,8 @@
         <div class="max-w-6xl mx-auto">
             <h3 class="text-3xl font-bold text-center mb-12 fade-in">📖 笔记导航</h3>
             
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- V-Prediction Note -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg card-hover fade-in stagger-1">
-                    <div class="flex items-start space-x-4">
-                        <div class="bg-gradient-to-br from-warm-secondary to-warm-accent p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-xl font-bold mb-2 text-warm-accent">V-Prediction 权重解释</h4>
-                            <p class="text-text-light mb-4 leading-relaxed">
-                                深入探讨 V-Prediction 在扩散模型中的权重机制，通过交互式可视化理解其理论基础和实践意义。
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex space-x-2">
-                                    <span class="bg-warm-secondary/20 text-warm-secondary px-2 py-1 rounded text-xs font-medium">深度学习</span>
-                                    <span class="bg-warm-accent/20 text-warm-accent px-2 py-1 rounded text-xs font-medium">扩散模型</span>
-                                </div>
-                                <a href="V-prediction权重解释.html" class="bg-warm-accent text-white px-4 py-2 rounded-lg hover:bg-warm-accent/90 transition-colors font-medium">
-                                    阅读笔记 →
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Continuity Equation Note -->
-                <div class="bg-white rounded-2xl p-8 shadow-lg card-hover fade-in stagger-2">
-                    <div class="flex items-start space-x-4">
-                        <div class="bg-gradient-to-br from-warm-primary to-warm-accent p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 21h10a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a4 4 0 01-4 4z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-xl font-bold mb-2 text-warm-primary">连续性方程推导</h4>
-                            <p class="text-text-light mb-4 leading-relaxed">
-                                通过交互式步骤详细推导连续性方程，从基本概念到数学表达式，帮助理解流体力学的基础原理。
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex space-x-2">
-                                    <span class="bg-warm-primary/20 text-warm-primary px-2 py-1 rounded text-xs font-medium">数学物理</span>
-                                    <span class="bg-warm-accent/20 text-warm-accent px-2 py-1 rounded text-xs font-medium">流体力学</span>
-                                </div>
-                                <a href="连续性方程.html" class="bg-warm-primary text-white px-4 py-2 rounded-lg hover:bg-warm-primary/90 transition-colors font-medium">
-                                    阅读笔记 →
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div id="articles-container" class="grid md:grid-cols-2 gap-8">
+                <!-- 文章卡片将通过JavaScript动态生成 -->
             </div>
         </div>
     </section>
@@ -209,30 +161,171 @@
     </footer>
 
     <script>
-        // 添加滚动动画效果
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
+        let articlesData = null;
+        
+        // 加载配置文件
+        async function loadArticlesData() {
+            try {
+                const response = await fetch('articles.json');
+                articlesData = await response.json();
+                generateTags();
+                generateArticles();
+                initializeFilters();
+                initializeAnimations();
+            } catch (error) {
+                console.error('加载文章配置失败:', error);
+            }
+        }
+        
+        // 生成标签按钮
+        function generateTags() {
+            const tagContainer = document.getElementById('tag-filters');
+            tagContainer.innerHTML = '';
+            
+            articlesData.tags.forEach(tag => {
+                const button = document.createElement('button');
+                button.className = `tag-filter bg-${tag.color}/20 hover:bg-${tag.color}/40 px-4 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer`;
+                button.setAttribute('data-tag', tag.id);
+                button.textContent = tag.name;
+                tagContainer.appendChild(button);
             });
-        }, observerOptions);
-
-        // 观察所有需要动画的元素
-        document.addEventListener('DOMContentLoaded', () => {
-            const animatedElements = document.querySelectorAll('.fade-in');
-            animatedElements.forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
+        }
+        
+        // 生成文章卡片
+        function generateArticles() {
+            const articlesContainer = document.getElementById('articles-container');
+            articlesContainer.innerHTML = '';
+            
+            articlesData.articles.forEach((article, index) => {
+                const articleCard = document.createElement('div');
+                articleCard.className = `note-card bg-white rounded-2xl p-8 shadow-lg card-hover fade-in stagger-${index + 1}`;
+                articleCard.setAttribute('data-tags', article.tags.join(','));
+                
+                const displayTagsHtml = article.displayTags.map(tag => {
+                    const tagColor = getTagColor(tag);
+                    return `<span class="bg-${tagColor}/20 text-${tagColor} px-2 py-1 rounded text-xs font-medium">${tag}</span>`;
+                }).join('');
+                
+                articleCard.innerHTML = `
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-gradient-to-br ${article.gradient} p-3 rounded-xl">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${article.icon}"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-xl font-bold mb-2 text-${article.buttonColor}">${article.title}</h4>
+                            <p class="text-text-light mb-4 leading-relaxed">
+                                ${article.description}
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex space-x-2">
+                                    ${displayTagsHtml}
+                                </div>
+                                <a href="${article.filename}" class="bg-${article.buttonColor} text-white px-4 py-2 rounded-lg hover:bg-${article.buttonColor}/90 transition-colors font-medium">
+                                    阅读笔记 →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                articlesContainer.appendChild(articleCard);
+            });
+        }
+        
+        // 获取标签颜色
+        function getTagColor(tagName) {
+            const colorMap = {
+                '深度学习': 'warm-secondary',
+                '扩散模型': 'warm-accent',
+                '数学物理': 'warm-primary',
+                '流体力学': 'warm-accent',
+                '理论研究': 'warm-primary'
+            };
+            return colorMap[tagName] || 'warm-accent';
+        }
+        
+        // 初始化过滤功能
+        function initializeFilters() {
+            const tagFilters = document.querySelectorAll('.tag-filter');
+            const noteCards = document.querySelectorAll('.note-card');
+            
+            // 设置默认激活状态
+            if (tagFilters.length > 0) {
+                tagFilters[0].classList.add('active');
+            }
+            
+            tagFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    const selectedTag = this.getAttribute('data-tag');
+                    
+                    // 更新按钮状态
+                    tagFilters.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 过滤文章卡片
+                    noteCards.forEach(card => {
+                        const cardTags = card.getAttribute('data-tags');
+                        
+                        if (selectedTag === 'all' || cardTags.includes(selectedTag)) {
+                            card.style.display = 'block';
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(20px)';
+                            
+                            // 添加淡入动画
+                            setTimeout(() => {
+                                card.style.transition = 'all 0.3s ease';
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0)';
+                            }, 50);
+                        } else {
+                            card.style.transition = 'all 0.3s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(-20px)';
+                            
+                            setTimeout(() => {
+                                card.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        }
+        
+        // 初始化动画
+        function initializeAnimations() {
+            // 页面加载动画
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+            
+            // 滚动动画
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.fade-in').forEach(el => {
                 observer.observe(el);
             });
-        });
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', loadArticlesData);
     </script>
 </body>
 </html>

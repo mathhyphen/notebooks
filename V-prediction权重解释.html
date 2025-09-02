@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V-Prediction 权重之谜：理论与实践的交互式解释</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Serene Dawn -->
+    <!-- Application Structure Plan: 本应用采用单页、分节的叙事结构。用户从上到下滚动，首先理解 Epsilon-Prediction 面临的“不平衡”问题，然后通过一个核心的交互式模块探索 V-Prediction 是如何通过其“天然平衡”的设计来解决这个问题的，最后通过一个直观的类比进行总结。这种结构旨在引导用户逐步深入，从发现问题到理解解决方案，符合认知规律，能最有效地解释这个复杂但关键的概念。 -->
+    <!-- Visualization & Content Choices:
+        1. 核心问题 -> 信息 -> 静态文本和数学公式 -> 阐明理论与实践的矛盾。
+        2. Epsilon-Prediction 的困境 -> 比较 -> HTML/CSS 模拟的天平图示 + 文本 -> 形象化展示不同噪声水平下学习难度的“不平衡” -> 使用直观比喻，无需图表库。
+        3. V-Prediction 的设计 -> 探索与分析 -> 交互式滑块 + Chart.js 动态图表 + 动态更新的数学公式 -> 允许用户亲手操作，直观感受 V-Prediction 目标向量的“数值稳定性” -> 这是回答核心问题的关键，交互性最强，选用 Chart.js 展示量级变化，清晰直接。
+        4. 总结对比 -> 比较与综合 -> HTML/CSS 图标 + 文本 -> 使用“教练与运动员”的比喻，巩固理解，强化记忆。
+        5. 所有数学公式使用 MathJax 渲染，确保清晰易读。
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'background': '#F5F5DC', // 米色背景
+                        'text-main': '#4A4A4A', // 深灰色文本
+                        'primary': '#D2B48C', // 鞣革色
+                        'accent': '#8FBC8F', // 暗海绿色
+                        'highlight': '#FFA07A', // 亮鲑色
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans SC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(210, 180, 140, 0.3);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+    </style>
+</head>
+<body class="bg-background text-text-main antialiased">
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        
+        <header class="text-center mb-12 md:mb-16">
+            <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-2">V-Prediction 权重之谜</h1>
+            <p class="text-lg md:text-xl text-gray-600">理论与实践的交互式探索</p>
+        </header>
+
+        <main class="space-y-12 md:space-y-20">
+
+            <!-- Section 1: The Core Question -->
+            <section class="max-w-3xl mx-auto">
+                <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-700">一个矛盾：理论推导 vs. 工程实践</h2>
+                    <p class="text-base md:text-lg leading-relaxed">
+                        您好！我们从 Flow Matching 的第一性原理严格推导发现，无论是 Epsilon-prediction还是 V-prediction，它们的损失函数都应该带有一个复杂的、与时间 `t` 相关的权重 \(\lambda(t)\)。
+                    </p>
+                    <p class="mt-4 text-base md:text-lg leading-relaxed">
+                        然而，在许多主流扩散模型的代码实现中，V-prediction 的损失函数却常常是简单的无权重形式：
+                    </p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-4 text-center text-lg font-mono">
+                        \(\mathcal{L}_v = \mathbb{E} \left\| v_\theta(x_t, t) - v \right\|^2\)
+                    </div>
+                    <p class="mt-4 text-base md:text-lg leading-relaxed">
+                        为什么理论上的权重在实践中“消失”了？本页面将通过交互式探索，为您揭开这个谜题。
+                    </p>
+                </div>
+            </section>
+            
+            <!-- Section 2: Epsilon-Prediction's Dilemma -->
+            <section class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700">1. Epsilon-Prediction 的“不平衡”困境</h2>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-3 text-gray-700">学习难度的巨大差异</h3>
+                        <p class="leading-relaxed mb-4">
+                            Epsilon-Prediction 的目标是预测噪声 \(\epsilon\)。这个任务的难度在不同噪声阶段（时间 `t`）下是**极不平衡**的。
+                        </p>
+                        <ul class="space-y-3 list-inside list-disc">
+                            <li><strong class="text-accent">t 很小 (噪声少):</strong> 从一张高清图片中找出微量的噪声，任务<strong class="text-highlight">非常困难</strong>。</li>
+                            <li><strong class="text-accent">t 很大 (噪声多):</strong> 从一堆噪声中“识别”出噪声，任务<strong class="text-highlight">非常简单</strong>。</li>
+                        </ul>
+                         <p class="mt-4 leading-relaxed">
+                            理论上的权重 \(\lambda(t)\) 正是为了**补偿**这种难度差异，它在困难时给予高权重，在简单时给予低权重。
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center p-6">
+                        <div class="text-center mb-2 font-semibold">学习难度的天平</div>
+                        <div class="w-full max-w-sm">
+                            <div class="h-2 bg-primary rounded-full relative">
+                                <div class="w-4 h-4 bg-gray-700 rounded-full absolute -top-1 left-1/2 -translate-x-1/2"></div>
+                            </div>
+                            <div class="flex justify-between mt-2 text-sm px-2">
+                                <div class="text-center">
+                                    <div class="font-bold text-highlight text-lg">困难</div>
+                                    <div class="text-xs text-gray-500">(t 很小)</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="font-bold text-highlight text-lg">简单</div>
+                                    <div class="text-xs text-gray-500">(t 很大)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-center mt-4 text-sm text-gray-600">
+                            去掉权重后，模型会自然偏向于在“简单”的一端做得更好，而可能忽略“困难”但重要的细节。
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: The Genius of V-Prediction -->
+            <section class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700">2. V-Prediction 的“天然平衡”设计</h2>
+                <p class="text-center max-w-3xl mx-auto mb-10 text-lg">
+                    V-Prediction 的巧妙之处在于，它设计的回归目标 \(v\) 本身，在数值尺度上是**天然平衡**的。让我们通过下面的交互模块来亲身体验一下。
+                </p>
+
+                <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
+                    <div class="mb-6">
+                        <label for="time-slider" class="block text-center font-medium mb-2">拖动滑块，观察时间 `t` 的变化：</label>
+                        <input id="time-slider" type="range" min="0" max="1" value="0.5" step="0.01" class="w-full h-2 bg-primary rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>t = 0 (纯数据)</span>
+                            <span>t = 0.5</span>
+                            <span>t = 1 (纯噪声)</span>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-start">
+                        <!-- Left column for formulas -->
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-gray-700">1. VP 路径定义:</h4>
+                                <div class="bg-gray-100 p-3 rounded-md text-sm">
+                                    \(x_t = \alpha_t x_1 + \sigma_t \epsilon\)
+                                </div>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold text-gray-700">2. V-Prediction 目标 `v` 定义:</h4>
+                                <div class="bg-gray-100 p-3 rounded-md text-sm">
+                                    \(v = \alpha_t \epsilon - \sigma_t x_t\)
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-700">当前参数值:</h4>
+                                <div id="params-display" class="bg-gray-100 p-3 rounded-md text-sm font-mono leading-relaxed"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right column for chart -->
+                        <div>
+                            <h4 class="font-semibold text-center mb-2 text-gray-700">目标向量的期望范数（大小）</h4>
+                             <div class="chart-container">
+                                <canvas id="normChart"></canvas>
+                            </div>
+                            <p id="chart-caption" class="text-center mt-2 text-sm text-gray-600"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Analogy -->
+             <section class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700">3. 一个比喻：聪明的教练</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
+                        <div class="text-3xl mb-3">🏋️</div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-700">普通教练 (Epsilon-Prediction)</h3>
+                        <p class="leading-relaxed">
+                            让运动员在平地和高原上都跑1公里，并要求相同的时间。这显然不公平，所以需要一个复杂的**加权评分系统**（理论上的 \(\lambda(t)\)）来评估成绩。
+                        </p>
+                    </div>
+                    <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
+                         <div class="text-3xl mb-3">🧠</div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-700">聪明教练 (V-Prediction)</h3>
+                        <p class="leading-relaxed">
+                            设计了一条**平衡的赛道**：高原上的路程是下坡，平地上的路程是上坡。最终使得运动员在任何赛段跑1公里的体能消耗都差不多。这样，就不再需要复杂的加权评分了。
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 5: Conclusion -->
+            <section class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-4 text-gray-700">结论</h2>
+                <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
+                    <p class="text-lg leading-relaxed">
+                        V-prediction 损失函数在实践中可以不带权重，并非经验上的妥协，而是**设计上的胜利**。
+                    </p>
+                    <p class="mt-4 text-lg leading-relaxed">
+                        它的回归目标 \(v\) 被巧妙地构造成了一个在整个时间 `t` 范围内都具有**相对恒定数值尺度**的量。既然目标本身已经“天然平衡”，那个用于“找平”学习难度的外部权重 \(\lambda(t)\)，其必要性就大大降低了。
+                    </p>
+                </div>
+            </section>
+
+        </main>
+        
+        <footer class="text-center mt-16 text-sm text-gray-500">
+            <p>交互式解释由 Gemini 生成</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const slider = document.getElementById('time-slider');
+            const paramsDisplay = document.getElementById('params-display');
+            const chartCaption = document.getElementById('chart-caption');
+            const ctx = document.getElementById('normChart').getContext('2d');
+
+            let chart;
+
+            const update = (t) => {
+                // Cosine schedule for alpha and sigma
+                const alpha_t = Math.cos(t * 0.5 * Math.PI);
+                const sigma_t = Math.sin(t * 0.5 * Math.PI);
+
+                // For visualization, assume high dimension d and orthogonal x1, epsilon with unit variance
+                // E[||v||^2] / d = (alpha_t - sigma_t^2)^2 + (sigma_t * alpha_t)^2
+                const expected_norm_v_sq_per_dim = Math.pow(alpha_t - sigma_t * sigma_t, 2) + Math.pow(sigma_t * alpha_t, 2);
+                const expected_norm_v = Math.sqrt(expected_norm_v_sq_per_dim);
+                
+                // For epsilon, the target is epsilon itself. Expected norm is sqrt(1) = 1.
+                const expected_norm_eps = 1.0;
+
+                // For score, the norm is 1/sigma_t. Handle t=0 case.
+                const expected_norm_score = sigma_t > 1e-6 ? 1.0 / sigma_t : 50; // Cap for visualization
+
+                paramsDisplay.innerHTML = `
+                    t = ${t.toFixed(2)} <br>
+                    &alpha;<sub>t</sub> = ${alpha_t.toFixed(3)} <br>
+                    &sigma;<sub>t</sub> = ${sigma_t.toFixed(3)}
+                `;
+                
+                if (!chart) {
+                    chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['目标 v', '目标 ε', '目标分数 (-ε/σ)'],
+                            datasets: [{
+                                label: '目标向量的期望相对大小',
+                                data: [expected_norm_v, expected_norm_eps, expected_norm_score],
+                                backgroundColor: [
+                                    'rgba(143, 188, 143, 0.6)',
+                                    'rgba(210, 180, 140, 0.6)',
+                                    'rgba(255, 160, 122, 0.6)'
+                                ],
+                                borderColor: [
+                                    'rgba(143, 188, 143, 1)',
+                                    'rgba(210, 180, 140, 1)',
+                                    'rgba(255, 160, 122, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.dataset.label}: ${context.raw.toFixed(2)}`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: '相对大小 (范数)'
+                                    },
+                                    grid: {
+                                      color: 'rgba(0,0,0,0.05)'
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                      display: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    chart.data.datasets[0].data = [expected_norm_v, expected_norm_eps, expected_norm_score];
+                    chart.update();
+                }
+
+                if (t < 0.1) {
+                    chartCaption.textContent = "在 t≈0 时，分数目标趋近无穷大，而 v 目标和 ε 目标尺度稳定。";
+                } else if (t > 0.9) {
+                     chartCaption.textContent = "在 t≈1 时，分数目标和 ε 目标尺度稳定，v 目标也保持稳定。";
+                } else {
+                    chartCaption.textContent = "在整个 t 范围内，v 目标的尺度变化远比分数目标平缓。";
+                }
+            };
+            
+            slider.addEventListener('input', (event) => {
+                update(parseFloat(event.target.value));
+            });
+
+            // Initial call
+            update(parseFloat(slider.value));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>连续性方程的交互式推导</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMVIARBEGEOdHflpr332T5opTarCFDSBnhEQIYebN0oU+aCIa" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmNOspdMLi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            background-color: #FDFBF8; /* Warm Taupe Palette Background */
+            color: #4A4A4A;
+        }
+        .katex-display {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #F7F3EE;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        .highlight-accent {
+            color: #A67B5B; /* Warm Taupe Palette Accent */
+        }
+        .step-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .step-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .control-volume {
+            border: 2px dashed #A67B5B;
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            margin: 1rem auto;
+            border-radius: 1rem;
+            background: rgba(166, 123, 91, 0.05);
+        }
+        .flux-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+        .active-btn {
+            background-color: #A67B5B;
+            color: #FFFFFF;
+        }
+        .inactive-btn {
+            background-color: #F7F3EE;
+            color: #A67B5B;
+        }
+    </style>
+    <!-- Chosen Palette: Warm Taupe -->
+    <!-- Application Structure Plan: The application is structured as a linear, scroll-driven narrative. This step-by-step format is ideal for explaining a mathematical derivation, as each section builds logically on the previous one. The flow starts with the intuitive physical setup (a control volume), introduces the concept of flux, explains the key mathematical tool (Divergence Theorem) with an interactive visualization, and finally combines everything to reach the conclusion. This narrative structure is chosen over a dashboard because the goal is guided learning and understanding a specific process, not open-ended data exploration. -->
+    <!-- Visualization & Content Choices: 1. Control Volume: A styled HTML div is used to represent the abstract volume 'V'. Goal: Setup. Justification: Simple, clear, and avoids unnecessary complexity. 2. Flux: CSS animations of arrows crossing the volume's border. Goal: Visualize flow. Justification: Dynamically shows the concept of 'flux' in a way static images cannot. 3. Divergence: An interactive HTML Canvas. Goal: Explain an abstract concept. Interaction: Buttons allow users to switch between a 'source' (positive divergence) and 'sink' (negative divergence) vector field. Justification: This is the most complex idea in the derivation, and direct interaction is the most effective way to build intuition. 4. Equations: KaTeX library renders LaTeX. Goal: Clear mathematical presentation. Justification: It's the standard for high-quality, accessible math on the web. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased">
+
+    <main class="max-w-4xl mx-auto p-4 sm:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-gray-800">连续性方程的由来</h1>
+            <p class="mt-4 text-lg text-gray-600">一个关于 <span class="highlight-accent font-semibold">概率守恒</span> 的直观推导</p>
+        </header>
+
+        <!-- Section 1: Core Idea -->
+        <section class="mb-16 step-section">
+            <h2 class="text-2xl font-bold mb-4">1. 核心思想：一个区域内的“概率总量”变化</h2>
+            <p class="text-lg leading-relaxed mb-6">
+                让我们从一个非常直观的想法开始：**概率不会凭空产生或消失**。为了将其数学化，我们可以把“概率”想象成一种看不见的“流体”。现在，让我们在空间中任意画定一个固定的区域（一个体积 <span class="font-mono highlight-accent">V</span>），它的边界是一个曲面 <span class="font-mono highlight-accent">S</span>。
+            </p>
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="w-full md:w-1/2">
+                    <div class="control-volume flex items-center justify-center">
+                        <div class="text-center">
+                            <span class="text-4xl font-bold highlight-accent">V</span>
+                            <p class="text-sm text-gray-500">边界为 S</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <p class="mb-4">在任何时刻 <span class="font-mono">t</span>，区域 <span class="font-mono">V</span> 内“概率流体”的总量 <span class="font-mono">P(t)</span>，就是概率密度 <span class="font-mono">p<sub>t</sub>(x)</span> 在整个体积内的积分：</p>
+                    <div class="math-container">$$ P(t) = \int_V p_t(x) dV $$</div>
+                    <p class="mt-4">根据守恒原则，这个总量之所以会变化，**唯一的原因**就是有“概率流体”从边界 <span class="font-mono">S</span> 流入或流出。因此，<span class="font-mono">V</span> 内概率总量的**增加速率**，必然等于**净流入**边界 <span class="font-mono">S</span> 的概率通量。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Flow -->
+        <section class="mb-16 step-section">
+            <h2 class="text-2xl font-bold mb-4">2. 用数学语言描述“流动”</h2>
+            <p class="text-lg leading-relaxed mb-6">
+                我们定义一个**概率通量密度**向量 <span class="font-mono highlight-accent">J</span>，它描述了概率流动的方向和强度：<span class="font-mono">J = p<sub>t</sub>(x) v<sub>t</sub>(x)</span>。
+                根据守恒定律，区域内概率的变化率等于穿过边界的净流入量。
+            </p>
+            <div class="math-container">$$ \frac{d P}{dt} = - \oint_S \vec{J} \cdot d\vec{S} $$</div>
+            <p class="text-center text-sm text-gray-500 mt-2">（负号表示我们计算的是净流入，而积分本身计算的是净流出）</p>
+            <p class="text-lg leading-relaxed my-6">
+                将第一步中的定义代入，我们得到了一个连接“内部”变化和“边界”流动的积分方程：
+            </p>
+            <div class="math-container">$$ \int_V \frac{\partial p_t}{\partial t} dV = - \oint_S (p_t \vec{v}_t) \cdot d\vec{S} $$</div>
+        </section>
+
+        <!-- Section 3: Divergence Theorem -->
+        <section class="mb-16 step-section">
+            <h2 class="text-2xl font-bold mb-4">3. 关键工具：高斯散度定理</h2>
+            <p class="text-lg leading-relaxed mb-6">
+                直接处理对边界的面积分（<span class="font-mono">∮<sub>S</sub></span>）非常困难。幸运的是，**高斯散度定理**为我们搭起了一座桥梁。它告诉我们：一个向量场穿过闭合曲面的**总通量**，等于这个向量场的**散度 (divergence)** 在曲面所包围的体积内的积分。
+            </p>
+            <p class="text-lg leading-relaxed mb-6">
+                散度衡量了一个点是“源”还是“汇”的强度。与下方交互图互动来感受它：
+            </p>
+            <div class="w-full max-w-md mx-auto p-4 rounded-lg bg-white shadow-md">
+                <div class="flex justify-center gap-4 mb-4">
+                    <button id="btn-source" class="px-4 py-2 rounded-md font-semibold transition-colors active-btn">源 (正散度)</button>
+                    <button id="btn-sink" class="px-4 py-2 rounded-md font-semibold transition-colors inactive-btn">汇 (负散度)</button>
+                </div>
+                <div class="chart-container relative w-full h-64 bg-gray-50 rounded-md">
+                    <canvas id="divergence-canvas"></canvas>
+                </div>
+                <p id="div-explanation" class="text-center mt-2 text-sm text-gray-600">一个“源”点，向量从中心向外扩散，通量为正。</p>
+            </div>
+             <p class="text-lg leading-relaxed my-6">
+                散度定理的数学形式如下，它将对“边界”的计算，巧妙地转化为了对“内部”的计算：
+            </p>
+            <div class="math-container">$$ \oint_S (p_t \vec{v}_t) \cdot d\vec{S} = \int_V \text{div}(p_t \vec{v}_t) dV $$</div>
+        </section>
+
+        <!-- Section 4: Conclusion -->
+        <section class="mb-16 step-section">
+            <h2 class="text-2xl font-bold mb-4">4. 组合并得到连续性方程</h2>
+            <p class="text-lg leading-relaxed mb-6">
+                现在，我们将散度定理应用到我们的守恒方程中，用体积积分替换掉面积分：
+            </p>
+             <div class="math-container">$$ \int_V \frac{\partial p_t}{\partial t} dV = - \int_V \text{div}(p_t \vec{v}_t) dV $$</div>
+            <p class="text-lg leading-relaxed my-6">
+                将所有项移到等式左边：
+            </p>
+            <div class="math-container">$$ \int_V \left( \frac{\partial p_t}{\partial t} + \text{div}(p_t \vec{v}_t) \right) dV = 0 $$</div>
+             <p class="text-lg leading-relaxed my-6">
+                这个方程的含义是，括号里的表达式在**任何我们任意选取的体积 <span class="font-mono">V</span>** 内的积分都等于零。对于一个连续函数，如果它在任何区域内的积分都为零，那么这个函数本身必须**处处为零**。因此，我们可以自信地去掉积分号，得到一个在空间中每一点都成立的“局域”方程：
+            </p>
+             <div class="p-6 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                <div class="math-container text-2xl">$$ \frac{\partial p_t}{\partial t} + \text{div}(p_t \vec{v}_t) = 0 $$</div>
+            </div>
+            <p class="text-lg leading-relaxed mt-8">
+                这就是**连续性方程**。它完美地表达了概率守恒的物理思想：任何一点的概率密度随时间的变化，都精确地由其周围概率的流入和流出（即通量的散度）所决定。
+            </p>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // KaTeX rendering
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ]
+            });
+
+            // Intersection Observer for animations
+            const sections = document.querySelectorAll('.step-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Divergence canvas logic
+            const canvas = document.getElementById('divergence-canvas');
+            const ctx = canvas.getContext('2d');
+            const btnSource = document.getElementById('btn-source');
+            const btnSink = document.getElementById('btn-sink');
+            const explanation = document.getElementById('div-explanation');
+            let currentMode = 'source';
+
+            function resizeCanvas() {
+                const container = canvas.parentElement;
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                drawDivergence(currentMode);
+            }
+
+            function drawDivergence(mode) {
+                currentMode = mode;
+                const width = canvas.width;
+                const height = canvas.height;
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const gridSize = 30;
+                
+                ctx.clearRect(0, 0, width, height);
+
+                for (let x = gridSize / 2; x < width; x += gridSize) {
+                    for (let y = gridSize / 2; y < height; y += gridSize) {
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 10) continue;
+
+                        let angle = Math.atan2(dy, dx);
+                        let length = (mode === 'source') ? 
+                            Math.min(15, 200 / (dist + 1)) : 
+                            Math.min(15, dist / 15);
+
+                        if (mode === 'sink') {
+                            angle += Math.PI;
+                        }
+
+                        drawArrow(x, y, angle, length);
+                    }
+                }
+            }
+
+            function drawArrow(x, y, angle, length) {
+                ctx.beginPath();
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                ctx.moveTo(0, 0);
+                ctx.lineTo(length, 0);
+                ctx.lineTo(length - 5, -3);
+                ctx.moveTo(length, 0);
+                ctx.lineTo(length - 5, 3);
+                ctx.strokeStyle = '#A67B5B';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.restore();
+            }
+            
+            btnSource.addEventListener('click', () => {
+                btnSource.classList.replace('inactive-btn', 'active-btn');
+                btnSink.classList.replace('active-btn', 'inactive-btn');
+                explanation.textContent = '一个“源”点，向量从中心向外扩散，通量为正。';
+                drawDivergence('source');
+            });
+
+            btnSink.addEventListener('click', () => {
+                btnSink.classList.replace('inactive-btn', 'active-btn');
+                btnSource.classList.replace('active-btn', 'inactive-btn');
+                explanation.textContent = '一个“汇”点，向量向中心汇集，通量为负。';
+                drawDivergence('sink');
+            });
+
+            // Initial setup
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+        });
+    </script>
+</body>
+</html>

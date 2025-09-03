@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>婴幼儿MRI纵向数据配准工作流程</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e3a8a; /* text-blue-900 */
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #3b82f6; /* border-blue-500 */
+            padding-bottom: 0.5rem;
+        }
+        .subsection-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937; /* text-gray-800 */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        .alert-info {
+            background-color: #eff6ff; /* bg-blue-50 */
+            border: 1px solid #93c5fd; /* border-blue-300 */
+            color: #1e40af; /* text-blue-800 */
+        }
+        .alert-success {
+            background-color: #f0fdf4; /* bg-green-50 */
+            border: 1px solid #bbf7d0; /* border-green-300 */
+            color: #14532d; /* text-green-800 */
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        code {
+            background-color: #e5e7eb;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-900">婴幼儿MRI纵向数据配准工作流程</h1>
+            <p class="text-xl text-gray-600 mt-2">基于年龄匹配模板的精确配准方案</p>
+        </header>
+
+        <main>
+            <div class="section-card">
+                <h2 class="section-title">核心策略：年龄匹配模板配准</h2>
+                <p>本指南将详细阐述一个科学、严谨且高效的婴幼儿纵向MRI数据预处理工作流程。其核心策略是：**将每个时间点的图像，精确配准到与其年龄相对应的UNC标准模板上。**</p>
+                <div class="alert alert-info mt-4">
+                    <strong>策略原则</strong>：几月的图像，就配准到几月的UNC模板。
+                </div>
+                <p class="mt-4">该策略是目前公认的最佳实践之一，因为它完美地解决了“模板失配”问题，可以最大限度地保证配准的准确性，避免在预处理阶段引入与年龄相关的系统性偏差，为后续的生成模型训练提供最高质量的数据基础。</p>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-title">标准两步法工作流程</h2>
+                <p>为了在标准化数据的同时最大限度地保留真实的生物学信息，推荐采用以下两步法流程。</p>
+
+                <h3 class="subsection-title">第一步：被试内配准 (Intra-Subject Registration)</h3>
+                <p><strong>目标</strong>：消除同一个被试在不同扫描时间点因头部运动造成的姿态不一致问题。</p>
+                <p><strong>操作流程</strong>：</p>
+                <ol class="list-decimal list-inside space-y-2 mt-4">
+                    <li>对于每个被试，选择一个中间时间点（如12月龄）的图像作为该被试的“基准图像”（Reference）。</li>
+                    <li>将其余所有时间点（如6月龄、24月龄）的数据，都进行**刚性线性配准**到这个基准图像上。</li>
+                    <li>（<strong>优化建议</strong>）为了获得更高的精度，可以将被试内所有配准后的图像进行平均，生成一个“被试内平均模板”，然后再将所有原始时间点的数据重新配准到这个平均模板上。</li>
+                </ol>
+                <div class="alert alert-success">
+                    <strong>第一步完成后</strong>：对于每一个被试，其所有时间点的图像都已在自己的空间内对齐，姿态完全一致。但不同被试之间的数据仍然是歪斜且不可比的。
+                </div>
+
+                <h3 class="subsection-title">第二步：被试间配准 (Inter-Subject Registration)</h3>
+                <p><strong>目标</strong>：将所有被试的所有时间点数据，都精确地对齐到一个公共的、无偏的标准坐标空间。</p>
+                <p><strong>操作流程</strong>：</p>
+                <ol class="list-decimal list-inside space-y-2 mt-4">
+                    <li>拿出第一步处理好的数据。对于某个被试，您现在拥有了姿态一致的6月、12月、24月等多个时间点的图像。</li>
+                    <li>将该被试 **6月龄** 的图像，配准到 **UNC 6月龄模板** 上。</li>
+                    <li>将该被试 **12月龄** 的图像，配准到 **UNC 12月龄模板** 上。</li>
+                    <li>将该被试 **24月龄** 的图像，配准到 **UNC 24月龄模板** 上。</li>
+                    <li>对所有时间点重复此操作。然后对所有被试重复此操作。</li>
+                </ol>
+                
+                <h4 class="font-semibold text-lg mt-6 mb-2">配准方法选择：刚性 vs. 仿射</h4>
+                <p>在这一步中，通常推荐使用<strong>仿射（Affine）配准</strong>而非刚性（Rigid）配准。</p>
+                <ul class="list-disc list-inside mt-2">
+                    <li><strong>仿射配准</strong>：除了校正姿态（旋转、平移），还能校正全局的尺寸差异。这可以消除“个体间头颅大小不同”这个混淆变量，让您的生成模型更专注于学习大脑内部结构的真实变化。</li>
+                    <li><strong>刚性配准</strong>：只校正姿态，保留了原始的头颅大小。如果您有特殊的研究目的需要保留这一信息，可以选择此方法。但对于大多数生成任务，仿射配准是更优选择。</li>
+                </ul>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">关键步骤：质量控制 (Quality Control)</h2>
+                <p>完成所有配准后，必须进行目视检查，以确保配准的质量。这是保证最终分析结果可靠性的生命线。</p>
+                <p class="mt-2"><strong>推荐工具</strong>：FSLeyes, ITK-SNAP, 3D Slicer 等专业影像浏览器。</p>
+                <h3 class="subsection-title">检查方法：与模板叠加</h3>
+                <ol class="list-decimal list-inside space-y-2 mt-4">
+                    <li>在影像浏览器中，首先打开**目标模板**。例如，打开 <code>UNC_12_month_template.nii.gz</code>。</li>
+                    <li>使用“叠加(Overlay)”功能，加载您配准后的**对应图像**。例如，加载被试A处理后的 <code>subjectA_12_month_registered.nii.gz</code>。</li>
+                    <li>将您加载的图像设置为半透明（例如50%透明度）。</li>
+                    <li>在矢状面、冠状面、轴状面三个视图下仔细检查：
+                        <ul class="list-disc list-inside ml-6 mt-2">
+                            <li>大脑的整体轮廓是否与模板高度重合？</li>
+                            <li>内部关键结构（如脑室、皮层边界）是否对齐？</li>
+                        </ul>
+                    </li>
+                    <li>对几个有代表性的被试和时间点进行抽查，以确保整个流程的稳健性。</li>
+                </ol>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-title">总结</h2>
+                <p>通过遵循上述“被试内配准”+“基于年龄匹配模板的被试间配准”的两步法流程，您将能够生成一套高质量、准确对齐的纵向数据集。由于UNC模板集本身是对齐在同一个公共空间下的，此流程最终能确保您的所有数据都标准化到一个统一坐标系中，为后续的生成模型训练和科学分析奠定了坚实的基础。</p>
+            </div>
+        </main>
+        
+        <footer class="text-center text-gray-500 mt-10 pb-4">
+            <p>本文档旨在为婴幼儿脑影像纵向分析提供精确的预处理工作流程。</p>
+        </footer>
+    </div>
+
+</body>
+</html>

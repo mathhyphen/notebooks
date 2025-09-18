@@ -31,23 +31,70 @@
     <style>
         body {
             font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
         }
+        
+        /* 粒子背景画布 */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background: transparent;
+        }
+        
+        /* 确保内容在粒子之上 */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+        
         .card-hover {
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+        
+        .card-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .card-hover:hover::before {
+            left: 100%;
+        }
+        
         .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
         }
+        
         .gradient-text {
             background: linear-gradient(135deg, #A67B5B, #8FBC8F);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
         }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
         .fade-in {
             animation: fadeInUp 0.8s ease-out;
         }
+        
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -58,22 +105,277 @@
                 transform: translateY(0);
             }
         }
+        
+        /* 主题变量 */
+        :root {
+            --bg-primary: #fef7ed;
+            --bg-secondary: #fff7ed;
+            --bg-card: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent-primary: #f97316;
+            --accent-secondary: #fb923c;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #ffffff;
+            --text-secondary: #e2e8f0;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #60a5fa;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 更新背景和文本颜色 */
+        .animated-bg {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* 确保所有section和背景元素都应用主题 */
+        section {
+            background: var(--bg-secondary) !important;
+            transition: all 0.3s ease;
+        }
+        
+        /* Tailwind类名覆盖 */
+        .bg-warm-card\/50 {
+            background: var(--bg-secondary) !important;
+        }
+        
+        /* 确保主要容器背景正确 */
+         .content-layer {
+             background: transparent;
+         }
+         
+         /* Header和Footer主题支持 */
+         header {
+             background: var(--bg-card) !important;
+             backdrop-filter: blur(10px);
+             border-bottom: 1px solid var(--border) !important;
+         }
+         
+         footer {
+             background: var(--bg-primary);
+             border-top: 1px solid var(--border) !important;
+         }
+         
+         /* 覆盖Tailwind的背景类 */
+         .bg-white\/80 {
+             background: var(--bg-card) !important;
+         }
+         
+         .bg-warm-card {
+             background: var(--bg-card) !important;
+             color: var(--text-primary);
+         }
+         
+         .border-warm-primary\/20 {
+              border-color: var(--border) !important;
+          }
+          
+          /* 渐变文字主题适配 */
+          .gradient-text {
+              background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+          }
+          
+          /* 链接颜色主题适配 */
+          .text-warm-accent {
+              color: var(--accent-primary) !important;
+          }
+          
+          .text-warm-accent:hover {
+              color: var(--accent-secondary) !important;
+          }
+
+        .text-text-light {
+            color: var(--text-secondary);
+        }
+        
+        .text-text-main {
+            color: var(--text-primary);
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 10px 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 8px 15px var(--shadow);
+         }
+
+         /* 主题卡片样式 */
+         .theme-card {
+             background: var(--bg-card);
+             backdrop-filter: blur(10px);
+             border: 1px solid var(--border);
+             box-shadow: 0 4px 6px var(--shadow);
+         }
+
+         .theme-card:hover {
+             box-shadow: 0 10px 25px var(--shadow);
+         }
+
+         /* 更新笔记卡片样式 */
+         .note-card {
+             background: var(--bg-card) !important;
+             border: 1px solid var(--border);
+             color: var(--text-primary);
+         }
+
+         .note-card h3 {
+             color: var(--text-primary);
+         }
+
+         .note-card p {
+             color: var(--text-secondary);
+         }
+
+         /* 更新标签样式 */
+         .tag-filter {
+             background: var(--bg-card);
+             color: var(--text-primary);
+             border: 1px solid var(--border);
+         }
+
+         .tag-filter.active {
+             background: var(--accent-primary);
+             color: white;
+         }
+
+         .tag-filter:hover {
+             background: var(--accent-secondary);
+             color: white;
+         }
+
+        /* 浮动动画 */
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* 脉冲动画 */
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(166, 123, 91, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(166, 123, 91, 0.6); }
+        }
+        
         .stagger-1 { animation-delay: 0.1s; }
         .stagger-2 { animation-delay: 0.2s; }
         .stagger-3 { animation-delay: 0.3s; }
+        
+        .tag-filter {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .tag-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
         .tag-filter.active {
             background-color: rgba(139, 69, 19, 0.3) !important;
             color: #8B4513;
             font-weight: 600;
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.3);
         }
+        
         .note-card {
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* 磁性效果 */
+        .magnetic {
+            transition: transform 0.3s ease;
+        }
+        
+        /* 波纹效果 */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .ripple:active::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* 背景动画 */
+        .animated-bg {
+            background: linear-gradient(-45deg, #FDFBF8, #F7F3EE, #FDFBF8, #F0EDE8);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
     </style>
 </head>
-<body class="bg-warm-bg text-text-main min-h-screen">
+<body class="animated-bg text-text-main min-h-screen">
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" id="theme-toggle">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">夜间模式</span>
+    </button>
+
+    <!-- 粒子背景画布 -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <div class="content-layer">
     <!-- Header -->
     <header class="bg-white/80 backdrop-blur-sm border-b border-warm-primary/20 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 py-4">
@@ -89,7 +391,7 @@
     <!-- Hero Section -->
     <section class="py-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-5xl font-bold text-text-main mb-6 fade-in">📚 math_hyphen的随记</h2>
+            <h2 class="text-5xl font-bold text-text-main mb-6 fade-in float">📚 math_hyphen的随记</h2>
             <p class="text-xl text-text-light mb-8 leading-relaxed fade-in stagger-1">
                 这里收录了我在学习过程中整理的各种笔记和思考。<br>
                 每一篇都是对知识的深入探索，希望能为你的学习之路带来启发。
@@ -116,22 +418,22 @@
         <div class="max-w-4xl mx-auto text-center">
             <h3 class="text-3xl font-bold mb-8 fade-in">💡 关于这个项目</h3>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="fade-in stagger-1">
-                    <div class="bg-warm-secondary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="fade-in stagger-1 theme-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-warm-secondary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 pulse-glow">
                         <span class="text-2xl">🎯</span>
                     </div>
                     <h4 class="font-bold mb-2">深入浅出</h4>
                     <p class="text-text-light text-sm">复杂概念通过可视化和交互式元素变得易于理解</p>
                 </div>
-                <div class="fade-in stagger-2">
-                    <div class="bg-warm-accent/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="fade-in stagger-2 theme-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-warm-accent/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 pulse-glow">
                         <span class="text-2xl">🔬</span>
                     </div>
                     <h4 class="font-bold mb-2">理论实践</h4>
                     <p class="text-text-light text-sm">结合理论推导和实际应用，构建完整的知识体系</p>
                 </div>
-                <div class="fade-in stagger-3">
-                    <div class="bg-warm-primary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="fade-in stagger-3 theme-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-2">
+                    <div class="bg-warm-primary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 pulse-glow">
                         <span class="text-2xl">📈</span>
                     </div>
                     <h4 class="font-bold mb-2">持续更新</h4>
@@ -159,9 +461,173 @@
             </div>
         </div>
     </footer>
+    
+    </div> <!-- 关闭 content-layer -->
 
     <script>
         let articlesData = null;
+        
+        // 粒子系统
+        class ParticleSystem {
+            constructor() {
+                this.canvas = document.getElementById('particles-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.mouse = { x: 0, y: 0 };
+                this.connections = [];
+                
+                this.resize();
+                this.init();
+                this.bindEvents();
+                this.animate();
+            }
+            
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            init() {
+                this.particles = [];
+                const particleCount = Math.min(150, Math.floor(window.innerWidth / 15));
+                
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        radius: Math.random() * 2 + 1,
+                        opacity: Math.random() * 0.5 + 0.2
+                    });
+                }
+            }
+            
+            bindEvents() {
+                window.addEventListener('resize', () => this.resize());
+                
+                document.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+            }
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 更新粒子位置
+                this.particles.forEach(particle => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    // 边界检测
+                    if (particle.x < 0 || particle.x > this.canvas.width) particle.vx *= -1;
+                    if (particle.y < 0 || particle.y > this.canvas.height) particle.vy *= -1;
+                    
+                    // 鼠标吸引效果
+                    const dx = this.mouse.x - particle.x;
+                    const dy = this.mouse.y - particle.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        const force = (150 - distance) / 150;
+                        particle.x += dx * force * 0.01;
+                        particle.y += dy * force * 0.01;
+                    }
+                });
+                
+                // 绘制连接线
+                this.drawConnections();
+                
+                // 绘制粒子
+                this.drawParticles();
+                
+                requestAnimationFrame(() => this.animate());
+            }
+            
+            drawConnections() {
+                // 检查当前主题
+                const isDark = document.body.getAttribute('data-theme') === 'dark';
+                const lineColor = isDark ? '96, 165, 250' : '251, 146, 60'; // 亮蓝色 : 橙色
+                const mouseLineColor = isDark ? '147, 197, 253' : '254, 215, 170'; // 更亮蓝色 : 浅橙色
+                
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const dx = this.particles[i].x - this.particles[j].x;
+                        const dy = this.particles[i].y - this.particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 120) {
+                            const opacity = (120 - distance) / 120 * 0.3;
+                            this.ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`;
+                            this.ctx.lineWidth = 1;
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                            this.ctx.stroke();
+                        }
+                    }
+                    
+                    // 鼠标连接线
+                    const dx = this.mouse.x - this.particles[i].x;
+                    const dy = this.mouse.y - this.particles[i].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        const opacity = (150 - distance) / 150 * 0.4;
+                        this.ctx.strokeStyle = `rgba(${mouseLineColor}, ${opacity})`;
+                        this.ctx.lineWidth = 2;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                        this.ctx.lineTo(this.mouse.x, this.mouse.y);
+                        this.ctx.stroke();
+                    }
+                }
+            }
+            
+            drawParticles() {
+                // 检查当前主题
+                const isDark = document.body.getAttribute('data-theme') === 'dark';
+                const particleColor = isDark ? '96, 165, 250' : '251, 146, 60'; // 亮蓝色 : 橙色
+                
+                this.particles.forEach(particle => {
+                    // 增加透明度，确保粒子可见
+                    const opacity = Math.max(particle.opacity, 0.4);
+                    this.ctx.fillStyle = `rgba(${particleColor}, ${opacity})`;
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+            }
+        }
+        
+        // 磁性效果
+        function addMagneticEffect() {
+            const magneticElements = document.querySelectorAll('.card-hover, .tag-filter');
+            
+            magneticElements.forEach(element => {
+                element.addEventListener('mousemove', (e) => {
+                    const rect = element.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    
+                    const distance = Math.sqrt(x * x + y * y);
+                    const maxDistance = Math.max(rect.width, rect.height) / 2;
+                    
+                    if (distance < maxDistance) {
+                        const strength = (maxDistance - distance) / maxDistance;
+                        const moveX = x * strength * 0.1;
+                        const moveY = y * strength * 0.1;
+                        
+                        element.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.02)`;
+                    }
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    element.style.transform = '';
+                });
+            });
+        }
         
         // 加载配置文件
         async function loadArticlesData() {
@@ -198,12 +664,12 @@
             
             articlesData.articles.forEach((article, index) => {
                 const articleCard = document.createElement('div');
-                articleCard.className = `note-card bg-white rounded-2xl p-8 shadow-lg card-hover fade-in stagger-${index + 1}`;
+                articleCard.className = `note-card theme-card rounded-2xl p-8 shadow-lg card-hover fade-in stagger-${index + 1}`;
                 articleCard.setAttribute('data-tags', article.tags.join(','));
                 
                 const displayTagsHtml = article.displayTags.map(tag => {
                     const tagColor = getTagColor(tag);
-                    return `<span class="bg-${tagColor}/20 text-${tagColor} px-2 py-1 rounded text-xs font-medium">${tag}</span>`;
+                    return `<span class="bg-${tagColor}/20 text-text-main px-2 py-1 rounded text-xs font-medium">${tag}</span>`;
                 }).join('');
                 
                 articleCard.innerHTML = `
@@ -214,7 +680,7 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h4 class="text-xl font-bold mb-2 text-${article.buttonColor}">${article.title}</h4>
+                            <h4 class="text-xl font-bold mb-2 text-text-main">${article.title}</h4>
                             <p class="text-text-light mb-4 leading-relaxed">
                                 ${article.description}
                             </p>
@@ -324,8 +790,63 @@
             });
         }
         
+        // 主题切换功能
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            const body = document.body;
+            
+            // 检查本地存储的主题设置
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = '日间模式';
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.getAttribute('data-theme');
+                
+                if (currentTheme === 'dark') {
+                    body.removeAttribute('data-theme');
+                    themeIcon.textContent = '🌙';
+                    themeText.textContent = '夜间模式';
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    body.setAttribute('data-theme', 'dark');
+                    themeIcon.textContent = '☀️';
+                    themeText.textContent = '日间模式';
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
+
         // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', loadArticlesData);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadArticlesData();
+            
+            // 初始化主题切换
+            initThemeToggle();
+            
+            // 初始化粒子系统
+            new ParticleSystem();
+            
+            // 添加磁性效果
+            setTimeout(() => {
+                addMagneticEffect();
+            }, 1000);
+            
+            // 添加波纹效果到按钮
+            document.addEventListener('click', (e) => {
+                if (e.target.matches('button, a, .tag-filter')) {
+                    e.target.classList.add('ripple');
+                    setTimeout(() => {
+                        e.target.classList.remove('ripple');
+                    }, 600);
+                }
+            });
+        });
     </script>
 </body>
 </html>

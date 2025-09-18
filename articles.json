@@ -32,6 +32,17 @@
       "icon": "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-10l1.586-1.586a2 2 0 012.828 0L20 6m-6 6v4m0-10V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m6 4h.01M6 20h8a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
       "gradient": "from-blue-500 to-indigo-600",
       "buttonColor": "blue-500"
+    },
+    {
+      "id": "optimal-transport",
+      "title": "结构保持的最优传输理论",
+      "description": "如何改造OT，使其适用于医学图像配准等需要保持结构连续性的任务，探讨正则化最优传输和Benamou-Brenier流体力学公式。",
+      "filename": "结构保持的最优传输理论.html",
+      "tags": ["数学物理", "理论研究"],
+      "displayTags": ["最优传输", "医学影像"],
+      "icon": "M13 10V3L4 14h7v7l9-11h-7z",
+      "gradient": "from-green-500 to-teal-600",
+      "buttonColor": "green-500"
     }
   ],
   "tags": [

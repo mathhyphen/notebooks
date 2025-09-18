@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结构保持的最优传输(OT)理论</title>
+    <!-- 引入 KaTeX 用于渲染 LaTeX 数学公式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMeaMurHltQSMM6Gdm2aAZgGTbWFSRh3MpbXHWEFws4Ckf5LQ" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.8;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            border: 1px solid #dee2e6;
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #212529;
+        }
+        h2 {
+            font-size: 1.8em;
+            color: #28a745; /* Green for this theme */
+            border-left: 5px solid #28a745;
+            padding-left: 15px;
+            margin-top: 40px;
+        }
+        p, li {
+            font-size: 1.1em;
+            text-align: justify;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .formula {
+            background-color: #f1f3f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .image-gallery {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .image-gallery figure {
+            text-align: center;
+        }
+        .image-gallery img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: white;
+        }
+        .arrow {
+            font-size: 2.5em;
+            color: #6c757d;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>结构保持的最优传输理论</h1>
+            <p><strong>如何改造OT，使其适用于医学图像配准等需要保持结构连续性的任务</strong></p>
+        </header>
+
+        <section>
+            <h2>问题的提出：优雅与现实的冲突</h2>
+            <div class="warning">
+                <strong>核心挑战：</strong> 经典的最优传输(OT)理论允许质量“瞬移”和“撕裂”，这使得它能处理拓扑变化，但也意味着它无法保证解剖结构的连续性。在医学图像配准中，我们绝不希望大脑或器官的结构在对齐中断裂。
+            </div>
+            <p>
+                那么，我们能否在保留OT数学美感的同时，为其加上“物理现实”的约束，使其生成的形变既高效又平滑，从而保证解剖结构的完整性呢？答案是肯定的。这需要对经典OT理论进行扩展。
+            </p>
+        </section>
+
+        <section>
+            <h2>核心思路：为“搬运计划”增加“平滑”规则</h2>
+            <p>
+                解决问题的关键在于，我们不能再仅仅寻找“成本最低”的搬运计划，而是要寻找一个在“成本”和“平滑度”之间达到最佳平衡的计划。这主要通过两种途径实现。
+            </p>
+
+            <h3>方法一：正则化最优传输 (Regularized OT)</h3>
+            <p>
+                这是最直观的改进方法。我们在原始的OT优化目标中，显式地增加一个“惩罚项”，这个惩罚项专门用来惩罚那些会导致结构不连续的“野蛮”搬运计划。
+            </p>
+            <p>
+                原始OT的目标是最小化运输成本：
+            </p>
+            <div class="formula">
+                $$ \min_{\pi} \sum_{i,j} \pi(i,j) C(i,j) $$
+            </div>
+            <p>
+                正则化OT的目标则是在此基础上增加一个平滑惩罚 $R(\pi)$：
+            </p>
+            <div class="formula">
+                $$ \min_{\pi} \left( \sum_{i,j} \pi(i,j) C(i,j) + \lambda \cdot R(\pi) \right) $$
+            </div>
+            <ul>
+                <li>$R(\pi)$ 是一个<strong>正则化项</strong>，它被设计用来衡量由传输计划 $\pi$ 所隐含的<strong>位移场的平滑程度</strong>。一个会导致剧烈、不连续位移的计划 $\pi$ 会得到一个很高的 $R(\pi)$ 值。</li>
+                <li>$\lambda$ 是一个超参数，用于权衡“运输成本”和“平滑度”的重要性。$\lambda$ 越大，算法就越倾向于选择一个平滑但可能不是成本最低的传输方案。</li>
+            </ul>
+            <p>
+                通过这种方式，我们强制算法在寻找最优路径的同时，必须时刻考虑路径的平滑性，从而有效避免了解剖结构的撕裂。
+            </p>
+
+            <h3>方法二：Benamou-Brenier 流体力学公式</h3>
+            <p>
+                这是一种更深刻、更强大的方法，它揭示了最优传输与流体力学之间惊人的内在联系。它将寻找最优传输计划的问题，完全等价地转换为了一个求解流体力学路径的问题。
+            </p>
+            <div class="image-gallery">
+                <figure>
+                    <img src="https://placehold.co/150x150/000000/FFFFFF?text=%CE%BC" alt="[源密度的图像]">
+                    <figcaption>源密度 $\rho(x,0)=\mu$</figcaption>
+                </figure>
+                <div class="arrow">+</div>
+                <figure>
+                    <img src="https://placehold.co/150x150/28a745/FFFFFF?text=v(x,t)" alt="[速度场的图像]">
+                    <figcaption>速度场 $v(x,t)$</figcaption>
+                </figure>
+                <div class="arrow">&rarr;</div>
+                <figure>
+                    <img src="https://placehold.co/150x150/000000/FFFFFF?text=%CE%BD" alt="[目标密度的图像]">
+                    <figcaption>目标密度 $\rho(x,1)=\nu$</figcaption>
+                </figure>
+            </div>
+            <p>
+                该公式将问题重新描述为：寻找一个随时间变化的<strong>速度场 $v(x,t)$</strong> 和<strong>密度场 $\rho(x,t)$</strong>，它们需要满足以下条件：
+            </p>
+            <ol>
+                <li><strong>路径演化：</strong> 密度场从初始分布 $\rho(x,0) = \mu$ (源图像) 开始，在速度场 $v$ 的推动下，最终演化为目标分布 $\rho(x,1) = \nu$ (目标图像)。</li>
+                <li><strong>质量守恒：</strong> 在整个过程中，质量不能凭空产生或消失。这由经典的<strong>连续性方程</strong>保证：$\partial_t \rho + \nabla \cdot (\rho v) = 0$。</li>
+                <li><strong>最小动能：</strong> 在所有可能的路径中，我们寻找那条总动能最小的路径。</li>
+            </ol>
+            <p>
+               最终的优化目标变为：
+            </p>
+            <div class="formula">
+               $$ \min_{v, \rho} \int_0^1 \int_{\Omega} \rho(x,t) \|v(x,t)\|^2 dx dt $$
+            </div>
+            <p>
+                <strong>核心突破：</strong> 这种方法的最大优势在于，它直接将我们的求解目标从抽象的“传输计划” $\pi$ 变为了具体的**速度场 $v(x,t)$**！这正是LDDMM等经典配准算法的核心产出。一旦我们得到了速度场，我们就可以对其施加各种成熟的平滑约束（例如，要求其在空间上是平滑可微的），从而完美地保证最终生成的形变是连续且保持拓扑结构的。
+            </p>
+        </section>
+
+        <section>
+            <h2>结论：融合优雅与现实</h2>
+            <p>
+                通过正则化或引入流体力学框架，最优传输理论成功地被改造，以适应需要保持结构连续性的任务。这些扩展方法不仅保留了OT处理质量分布的强大能力，还为其赋予了生成平滑、物理可信形变场的功能。
+            </p>
+            <p>
+                这使得最优传输不再仅仅是一个用于内容生成的工具，更成为了连接几何配准与概率分布比较的桥梁，为下一代医学图像分析算法提供了坚实的理论基础。
+            </p>
+        </section>
+
+        <footer>
+            <p>现代最优传输理论正在弥合数学优雅性与实际应用需求之间的鸿沟。</p>
+        </footer>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+              delimiters: [
+                  {left: '$$', right: '$$', display: true},
+                  {left: '$', right: '$', display: false}
+              ],
+              throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
+

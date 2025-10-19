@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>类别流匹配（CFM）在统计流形上的方法说明 · Sphere + EMA</title>
+  <style>
+    :root {
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --brand1: #0ea5e9;
+      --brand2: #10b981;
+      --brand3: #8b5cf6;
+      --shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "PingFang SC", "Microsoft Yahei", sans-serif; margin: 0; color: var(--text); background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%); }
+    a { color: var(--brand1); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .hero {
+      background: radial-gradient(1200px circle at 10% 0%, rgba(14,165,233,0.12), transparent 40%),
+                  radial-gradient(1000px circle at 90% 0%, rgba(139,92,246,0.12), transparent 40%),
+                  linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+      padding: 56px 24px 28px; text-align: center; border-bottom: 1px solid #e5e7eb;
+    }
+    .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
+    .subtitle { margin-top: 10px; color: var(--muted); }
+    .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
+    .container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+    .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; }
+    .toc h3 { margin: 0 0 10px; font-size: 16px; }
+    .toc ul { list-style: none; padding: 0; margin: 0; }
+    .toc li { margin: 8px 0; }
+    .card { background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 18px; margin-bottom: 18px; }
+    h2 { margin: 0 0 10px; font-size: 20px; }
+    p { margin: 10px 0; line-height: 1.7; }
+    ul { margin: 8px 0 8px 18px; }
+    li { margin: 6px 0; }
+    .kbd { background:#eef2ff; border:1px solid #e5e7eb; border-radius:6px; padding:0 6px; }
+    .badge { display:inline-block; background: linear-gradient(90deg, var(--brand1), var(--brand3)); color:white; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+    .footer { text-align:center; color: var(--muted); padding: 22px; }
+    .callout { background: #f8fafc; border-left: 4px solid var(--brand2); padding: 10px 12px; border-radius: 8px; }
+
+    /* 增强内联代码样式 */
+    code:not(pre code) {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
+      border: 1px solid #d1d5db; color: #111827; padding: 2px 6px; border-radius: 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    /* Prism 代码块容器优化 */
+    pre[class*="language-"] {
+      border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: var(--shadow);
+      margin: 12px 0; padding: 14px; background: #0b1220; /* 深色对比，提高阅读性 */
+    }
+    .prism-title {
+      display: inline-block; margin-bottom: 6px; font-size: 12px; color: #64748b;
+      background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 999px; padding: 2px 8px;
+    }
+
+    /* 调整 line-numbers 插件的样式 */
+    pre.line-numbers { position: relative; padding-left: 3.5em; }
+    .line-numbers .line-numbers-rows { border-right: 1px solid rgba(255,255,255,0.08); }
+
+  </style>
+  <!-- 数学公式渲染 -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+      chtml: { scale: 1.0 }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" defer></script>
+
+  <!-- Prism 语法高亮与插件 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-okaidia.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/line-numbers/prism-line-numbers.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/toolbar/prism-toolbar.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js" defer></script>
+</head>
+<body>
+  <header class="hero">
+    <span class="badge">Fisher–Rao · Sphere Geometry</span>
+    <div class="title">类别流匹配（CFM）在统计流形上的方法说明</div>
+    <div class="subtitle">基于球面几何的概率标签生成与条件变换 · 结合 EMA 稳定推理</div>
+    <div class="meta">实现参考：<a href="../train_fm_label_alpha.py" target="_blank">train_fm_label_alpha.py</a> · 理论参考：<a href="./Cheng 等 - Categorical Flow Matching on Statistical Manifolds.pdf" target="_blank">Cheng 等（CFM）</a></div>
+  </header>
+
+  <main class="container">
+    <nav class="toc">
+      <h3>目录</h3>
+      <ul>
+        <li><a href="#task">1. 背景与任务</a></li>
+        <li><a href="#manifold">2. 统计流形与映射</a></li>
+        <li><a href="#sphere">3. 球面几何与测地</a></li>
+        <li><a href="#model">4. 模型结构：SphereCategoricalFlow</a></li>
+        <li><a href="#loss">5. 训练目标：Flow Matching</a></li>
+        <li><a href="#pipeline">6. 训练管线要点</a></li>
+        <li><a href="#inference">7. 采样与推理</a></li>
+        <li><a href="#compare">8. 与 AlphaFlow 的差异</a></li>
+        <li><a href="#params">9. 超参数与建议</a></li>
+        <li><a href="#ref">10. 参考资料</a></li>
+      </ul>
+    </nav>
+
+    <section>
+      <div id="task" class="card">
+        <h2>1. 背景与任务</h2>
+        <p>我们在三维医学影像的体素级别上，学习从先验到目标概率标签（<span class="kbd">n_class=4</span>）的连续变换（<strong>流</strong>），并通过年龄条件 <code>source_month</code> 与 <code>target_month</code> 控制生成。概率标签属于单纯形，欧氏几何优化易破坏非负与和为 1 的约束，因此采用 <strong>Fisher–Rao</strong> 的统计流形几何进行流匹配（CFM）。</p>
+      </div>
+
+      <div id="manifold" class="card">
+        <h2>2. 统计流形与映射</h2>
+        <p>使用平方根映射将概率单纯形嵌入单位球面：</p>
+        <p class="callout">$$\pi: \Delta^{K-1} \to S^{K-1},\quad y_i = \sqrt{p_i},\quad p_i \ge 0,\ \sum_i p_i = 1.$$</p>
+        <p>逆映射为逐元平方后归一：</p>
+        <p class="callout">$$\pi^{-1}(y) = \operatorname{normalize}(y^2) = \left( \frac{y_1^2}{\sum_j y_j^2},\dots, \frac{y_K^2}{\sum_j y_j^2} \right).$$</p>
+        <p>在球面上进行测地插值与速度拟合，再通过 \(\pi^{-1}\) 投回概率空间，确保整个轨迹概率合法。</p>
+      </div>
+
+      <div id="sphere" class="card">
+        <h2>3. 球面几何与测地</h2>
+        <p>给定 \(y_0, y_1 \in S^{K-1}\)，夹角：</p>
+        <p class="callout">$$\theta = \arccos\big(\langle y_0, y_1 \rangle\big).$$</p>
+        <p>球面对数/指数映射：</p>
+        <p class="callout">$$\log_{y_0}(y_1) = \frac{\theta}{\sin\theta}\Big( y_1 - (\cos\theta)\, y_0 \Big),\quad \theta \ne 0;$$
+        $$\exp_{y_0}(v) = (\cos\lVert v\rVert)\, y_0 + \frac{\sin\lVert v\rVert}{\lVert v\rVert}\, v.$$</p>
+        <p>当 \(\theta \approx 0\) 时，\(\log\) 映射可用切空间投影近似：\(\operatorname{Proj}_{T_{y_0}S}(y_1 - y_0)\)。</p>
+        <p>球面测地插值（slerp）：</p>
+        <p class="callout">$$y_t = \frac{\sin((1-t)\theta)}{\sin\theta}\, y_0\ +\ \frac{\sin(t\theta)}{\sin\theta}\, y_1,\quad t\in[0,1],$$
+        $$p_t = \pi^{-1}(y_t) = \operatorname{normalize}\big(y_t^2\big).$$</p>
+      </div>
+
+      <div id="model" class="card">
+        <h2>4. 模型结构：SphereCategoricalFlow</h2>
+        <ul>
+          <li><strong>编码器</strong>：用 MONAI 的 <code>DiffusionModelUNet</code> 参数化条件向量场，输入/输出形状一致（每体素一个 K 维向量）。</li>
+          <li><strong>年龄条件</strong>：<code>AgeEncoder</code> 将 <code>(source_month, target_month)</code> 编为 128 维，通过 UNet 的跨注意力（<code>cross_attention_dim=128</code>）注入。</li>
+          <li><strong>几何运算</strong>：类中实现 <code>preprocess/postprocess/exp/log/proj_vf/interpolate</code>，在球面上进行所有关键计算。</li>
+          <li><strong>先验</strong>：球面上的自然先验（对应概率单纯形的平滑先验），从先验流向数据分布。</li>
+        </ul>
+        <span class="prism-title">Python</span>
+        <pre class="line-numbers language-python"><code class="language-python">unet = DiffusionModelUNet(spatial_dims=3, in_channels=4, out_channels=4,
+  channels=[32, 64, 64, 128], attention_levels=[False, False, True, True],
+  num_res_blocks=2, num_head_channels=(0, 0, 64, 128),
+  with_conditioning=True, cross_attention_dim=128, use_flash_attention=True)
+
+class AgeEncoder(nn.Module):
+  def forward(self, s_month, t_month):
+    # (B,) -&gt; (B, 128)
+    pass
+
+class UNetCategoricalEncoder(nn.Module):
+  def forward(self, enc_input, t, context):
+    # (B, H, W, D, K) -&gt; UNet -&gt; (B, H, W, D, K)
+    pass</code></pre>
+      </div>
+
+      <div id="loss" class="card">
+        <h2>5. 训练目标：Flow Matching（FM）</h2>
+        <p>在时间 \(t\in[0,1]\) 上，为每个中间态 \(p_t\) 学习向量场 \(v_{\theta}(p_t, t, c)\)，逼近真实测地速度 \(v^*\)。典型损失：</p>
+        <p class="callout">$$\mathcal{L}(\theta) = \mathbb{E}_{t\sim\mathcal{U}(0,1),\ p\sim\mathcal{D}}\big[\,\big\lVert v_{\theta}(p_t, t, c) - v^*(p_t, t) \big\rVert^2\,\big].$$</p>
+        <span class="prism-title">Python</span>
+        <pre class="line-numbers language-python"><code class="language-python"># p: (B, 4, H, W, D) -&gt; (B, H, W, D, 4) -&gt; (B, D_total, 4)
+p = target_label.permute(0,2,3,4,1).contiguous().view(B, -1, 4)
+age = age_encoder(source_month, target_month).unsqueeze(1)
+loss = flow_model.get_loss(p, age)</code></pre>
+      </div>
+
+      <div id="pipeline" class="card">
+        <h2>6. 训练管线要点</h2>
+        <ul>
+          <li><strong>维度</strong>：<code>data_dims=(160,192,160)</code>，<code>n_class=4</code>。</li>
+          <li><strong>优化</strong>：优化 UNet 与 AgeEncoder（<code>AdamW</code>，<code>lr=1e-4</code>）。</li>
+          <li><strong>加速</strong>：<code>accelerate</code> 管理 <span class="kbd">fp16</span> 与设备。</li>
+          <li><strong>EMA</strong>：为两者维护 EMA（<code>beta=0.9999</code>），验证/采样用 EMA 权重更稳。</li>
+          <li><strong>日志与检查点</strong>：<code>mlflow</code> 记录指标，周期性保存 <code>epoch_X.pt</code> 与 <code>latest_model.pt</code>。</li>
+        </ul>
+      </div>
+
+      <div id="inference" class="card">
+        <h2>7. 采样与推理</h2>
+        <p>以 EMA 权重重建 <code>SphereCategoricalFlow</code>，调用 <code>sample(...)</code> 从球面先验沿学得向量场积分到目标分布，得到体素级类别概率（支持 ODE / Euler 积分）。</p>
+        <span class="prism-title">Python</span>
+        <pre class="line-numbers language-python"><code class="language-python">ema_unet = ema.get_ema_model('model')
+ema_age  = ema.get_ema_model('age_encoder')
+flow_eval = SphereCategoricalFlow(UNetCategoricalEncoder(ema_unet), data_dims, 4)
+with torch.no_grad():
+  samples = flow_eval.sample(cond=ema_age(source, target), num_steps=...)</code></pre>
+      </div>
+
+      <div id="compare" class="card">
+        <h2>8. 与 AlphaFlow 的差异</h2>
+        <ul>
+          <li><strong>几何一致性</strong>：在 Fisher–Rao 几何上原生进行插值、速度计算，映射由 <code>preprocess/postprocess</code> 明确控制。</li>
+          <li><strong>接口统一</strong>：训练/推理统一用 <code>get_loss</code> 与 <code>sample</code>，采样逻辑与训练内部一致。</li>
+          <li><strong>稳定性</strong>：配合 EMA 与球面投影，概率合法性强、采样更平滑。</li>
+        </ul>
+      </div>
+
+      <div id="params" class="card">
+        <h2>9. 超参数与建议</h2>
+        <ul>
+          <li><code>n_class=4</code>：确保每体素标签归一化为概率。</li>
+          <li><code>cross_attention_dim=128</code>：与 <code>AgeEncoder</code> 输出一致。</li>
+          <li><code>eps≈1e-4</code>：球面/投影数值稳定项，避免 \(\theta\approx0\)。</li>
+          <li><strong>EMA</strong>：<code>beta=0.9999</code>、<code>update_every</code> 按批大小与波动调参。</li>
+          <li><strong>步数</strong>：采样步数与 ODE 容差影响质量与速度，建议在验证集折中选择。</li>
+        </ul>
+      </div>
+
+      <div id="ref" class="card">
+        <h2>10. 参考资料</h2>
+        <ul>
+          <li>训练脚本：<a href="../train_fm_label_alpha.py" target="_blank">train_fm_label_alpha.py</a></li>
+          <li>论文：<a href="./Cheng 等 - Categorical Flow Matching on Statistical Manifolds.pdf" target="_blank">Cheng 等（CFM）</a></li>
+          <li>实现细节：<code>scripts/categorical.py</code>（<code>SphereCategoricalFlow</code> 及球面工具）。</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© 2025 CFM · Fisher–Rao Sphere · 说明页</footer>
+</body>
+</html>

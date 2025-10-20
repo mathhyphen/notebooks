@@ -37,7 +37,29 @@
             }
         }
     </script>
+    <!-- PrismJS for colored code blocks -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-okaidia.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js" defer></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Replace MathJax include with unified v3 config -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["$", "$"], ["\\(", "\\)"]],
+          displayMath: [["$$","$$"], ["\\[","\\]"]],
+          processEscapes: true
+        },
+        options: { skipHtmlTags: ["script","noscript","style","textarea","pre","code"] },
+        chtml: { scale: 1.0 }
+      };
+    </script>
+    <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
     <style>
         body {
             font-family: 'Noto Sans SC', sans-serif;
@@ -55,6 +77,25 @@
             margin-right: auto;
             height: 300px;
             max-height: 40vh;
+        }
+        /* Prism 代码块容器优化，统一为 CFM 风格 */
+        pre[class*="language-"] {
+            border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: var(--shadow);
+            margin: 12px 0; padding: 14px; background: #0b1220;
+        }
+        .prism-title {
+            display: inline-block; margin-bottom: 6px; font-size: 12px; color: #64748b;
+            background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 999px; padding: 2px 8px;
+        }
+        /* 调整 line-numbers 插件的样式 */
+        pre.line-numbers { position: relative; padding-left: 3.5em; }
+        .line-numbers .line-numbers-rows { border-right: 1px solid rgba(255,255,255,0.08); }
+        /* Inline code 统一为 CFM 风格 */
+        code:not(pre code) {
+            border: 1px solid #d1d5db; color: #111827; padding: 2px 6px; border-radius: 6px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+            background: #f8fafc;
+            font-size: 0.9em;
         }
     </style>
 </head>

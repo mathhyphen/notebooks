@@ -84,6 +84,23 @@
                          "icon":  "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10",
                          "gradient":  "from-blue-500 to-indigo-600",
                          "buttonColor":  "blue-500"
+                     },
+                     {
+                         "id":  "sphere-log-exp",
+                         "title":  "公式推导：球面几何中的指数与对数映射",
+                         "description":  "清晰推导单位球面上的对数映射与指数映射，配合几何图示与 MathJax 展示。",
+                         "filename":  "球面几何中的指数与对数映射.html",
+                         "tags":  [
+                                      "数学物理",
+                                      "理论研究"
+                                  ],
+                         "displayTags":  [
+                                             "信息几何",
+                                             "球面几何"
+                                         ],
+                         "icon":  "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10",
+                         "gradient":  "from-blue-500 to-indigo-600",
+                         "buttonColor":  "blue-500"
                      }
                  ],
     "tags":  [

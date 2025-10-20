@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公式推导：球面几何中的指数与对数映射</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <style>
+        :root {
+            --bg-main: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --accent-primary: #0d6efd;
+            --accent-green: #198754;
+            --accent-red: #dc3545;
+            --border-color: #dee2e6;
+            --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.8;
+            color: var(--text-primary);
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+        }
+        h1, h2, h3 {
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.8rem;
+        }
+        .formula-box {
+            background-color: #f1f3f5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .explanation {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-left: 5px solid var(--accent-primary);
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        .svg-container { text-align: center; margin: 2rem 0; background-color: #fcfdff; padding: 1rem; border-radius: 8px; border: 1px solid #e9ecef;}
+        code {
+            background-color: #e9ecef;
+            color: var(--accent-red);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+        }
+        .toc { display:flex; gap:10px; flex-wrap:wrap; margin: 0.8rem 0 1.2rem; }
+        .toc a { background-color:#f1f3f5; border:1px solid var(--border-color); color: var(--text-secondary); padding:6px 10px; border-radius:999px; font-size:0.95rem; text-decoration:none; }
+        .toc a:hover { color: var(--accent-primary); border-color: var(--accent-primary); background:#eef6ff; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>公式推导：球面几何中的指数与对数映射</h1>
+    <nav class="toc">
+      <a href="#setup">基础设定</a>
+      <a href="#logmap">对数映射</a>
+      <a href="#expmap">指数映射</a>
+      <a href="#summary">总结</a>
+      <a href="index.html">返回首页</a>
+    </nav>
+    <p>你所询问的公式源自对单位球面（Unit Sphere）上两点间最短路径——即大圆弧（Great Circle Arc）——的几何分析。所有推导都发生在由球心 `O`、起点 `y₀` 和终点 `y₁` 构成的二维平面内。</p>
+
+    <h2>1. 基础设定</h2>
+    <div class="explanation">
+        <ul>
+            <li>我们在一个单位球面上，所以所有点的向量模长（到球心的距离）为1，即 $\|y_0\| = \|y_1\| = 1$。</li>
+            <li>两点之间的夹角 $\theta$ 可以通过点积计算：$\cos\theta = \langle y_0, y_1 \rangle$。</li>
+            <li>两点间的最短球面距离（弧长）就是 $\theta$（因为半径为1）。</li>
+            <li>在点 $y_0$ 的切空间是一个与向量 $y_0$ 垂直的平面（或高维超平面）。</li>
+        </ul>
+    </div>
+
+    <h2>2. 对数映射 (Logarithm Map) 的推导</h2>
+    <p><strong>目标：</strong>找到一个位于 $y_0$ 切空间中的向量 $v$，它的方向指向 $y_1$，且长度等于弧长 $\theta$。</p>
+    <div class="formula-box">
+        $$ \log_{y_0}(y_1) = \frac{\theta}{\sin\theta} \left( y_1 - (\cos\theta) y_0 \right) $$
+    </div>
+
+    <div class="svg-container">
+        <svg width="400" height="250" viewBox="0 0 400 250">
+            <title>对数映射的几何分解（修正版）</title>
+            <!-- Great Circle -->
+            <circle cx="200" cy="125" r="100" fill="#f0f7ff" stroke="#aaccff" stroke-width="1"/>
+            <!-- Origin -->
+            <circle cx="200" cy="125" r="3" fill="black"/>
+            <text x="185" y="128" font-size="14">O</text>
+            <!-- Vectors y0, y1 -->
+            <line x1="200" y1="125" x2="200" y2="25" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="205" y="45" font-size="16" font-style="italic">y₀</text>
+            <line x1="200" y1="125" x2="286.6" y2="75" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="270" y="65" font-size="16" font-style="italic">y₁</text>
+            <!-- Tangent Space -->
+            <line x1="120" y1="25" x2="280" y2="25" stroke="gray" stroke-width="1.5" stroke-dasharray="4"/>
+            <text x="285" y="30" font-size="12" fill="gray">T<sub>y₀</sub>S<sup>n-1</sup></text>
+            <!-- Projection -->
+            <line x1="286.6" y1="75" x2="250" y2="25" stroke="#007bff" stroke-width="1.5" stroke-dasharray="3"/>
+            <text x="260" y="100" font-size="14">(cosθ)y₀</text>
+            <path d="M 200 125 L 200 68" stroke="gray" stroke-width="1" />
+            <!-- u_perp vector -->
+            <line x1="200" y1="68" x2="286.6" y2="75" stroke="#dc3545" stroke-width="2" marker-end="url(#arrow_red)"/>
+            <text x="245" y="85" fill="#dc3545" font-size="14">y₁ - (cosθ)y₀</text>
+            <!-- Angle theta -->
+            <path d="M 200 50 A 25 25, 0, 0, 1, 221.65 62.5" fill="none" stroke="#198754" stroke-width="1.5"/>
+            <text x="215" y="55" fill="#198754" font-size="14">θ</text>
+        </svg>
+    </div>
+
+    <div class="explanation">
+        <strong>推导步骤：</strong>
+        <ol>
+            <li><strong>寻找方向：</strong> 我们需要一个从 $y_0$ 指向 $y_1$ 且位于切空间内的向量。直接用 $y_1 - y_0$ 是不行的，因为它不一定在切空间里（即不一定垂直于 $y_0$）。</li>
+            <li><strong>正交分解：</strong> 我们可以将向量 $y_1$ 分解为两个正交分量：一个沿着 $y_0$ 方向，另一个垂直于 $y_0$（也就是在切空间里的方向）。
+                <ul>
+                    <li>沿着 $y_0$ 的分量是：$\langle y_1, y_0 \rangle y_0 = (\cos\theta) y_0$。</li>
+                    <li>垂直于 $y_0$ 的分量（如图中红色向量所示）就是：$y_1 - (\cos\theta) y_0$。这个向量 $u_\perp$ 就是我们需要的方向！</li>
+                </ul>
+            </li>
+            <li><strong>计算长度并缩放：</strong> 向量 $u_\perp$ 的长度是多少？根据向量三角形法则和 $\|y_0\|=\|y_1\|=1$，可以算出 $\|u_\perp\| = \sqrt{1^2 - (\cos\theta)^2} = \sin\theta$。但我们需要的最终向量 $v$ 长度应为弧长 $\theta$。因此，我们需要将 $u_\perp$ 乘以一个缩放因子 $\frac{\theta}{\sin\theta}$。</li>
+            <li><strong>最终公式：</strong> 组合起来，就得到了对数映射的公式 $v = \frac{\theta}{\sin\theta} u_\perp$。</li>
+        </ol>
+    </div>
+
+    <h2>3. 指数映射 (Exponential Map) 的推导</h2>
+    <p><strong>目标：</strong> 从起点 $y_0$ 出发，沿着切空间中的向量 $v$ 的方向，在球面上行进 $\|v\|$ 的距离，找到终点。</p>
+    <div class="formula-box">
+        $$ \exp_{y_0}(v) = (\cos\|v\|) y_0 + \left(\frac{\sin\|v\|}{\|v\|}\right) v $$
+    </div>
+
+    <div class="svg-container">
+        <svg width="400" height="250" viewBox="0 0 400 250">
+             <title>指数映射的几何分解（修正版）</title>
+             <!-- Great Circle -->
+             <circle cx="200" cy="125" r="100" fill="#f0fff4" stroke="#a3d9b1" stroke-width="1"/>
+             <!-- Origin -->
+             <circle cx="200" cy="125" r="3" fill="black"/>
+             <text x="185" y="128" font-size="14">O</text>
+             <!-- Basis vectors -->
+             <line x1="200" y1="125" x2="200" y2="25" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+             <text x="205" y="45" font-size="16" font-style="italic">y₀</text>
+             <line x1="200" y1="25" x2="300" y2="25" stroke="#6c757d" stroke-width="2" marker-end="url(#arrow_gray)"/>
+             <text x="240" y="20" font-size="16" font-style="italic">u = v/||v||</text>
+             <!-- Result vector -->
+             <line x1="200" y1="125" x2="286.6" y2="75" stroke="#0d6efd" stroke-width="2.5" marker-end="url(#arrow_blue)"/>
+             <text x="290" y="85" font-size="16" font-style="italic" fill="#0d6efd">y₁</text>
+             <!-- Components -->
+             <line x1="200" y1="68" x2="286.6" y2="75" stroke="#198754" stroke-width="1.5" stroke-dasharray="4"/>
+             <text x="290" y="55" fill="#198754" font-size="12">(sinα)u</text>
+             <line x1="286.6" y1="125" x2="286.6" y2="75" stroke="#dc3545" stroke-width="1.5" stroke-dasharray="4"/>
+             <text x="290" y="110" fill="#dc3545" font-size="12">(cosα)y₀</text>
+             <!-- Angle -->
+             <path d="M 200 50 A 25 25, 0, 0, 1, 221.65 62.5" fill="none" stroke="purple" stroke-width="1.5"/>
+             <text x="215" y="55" fill="purple" font-size="14">α=||v||</text>
+        </svg>
+    </div>
+    
+    <div class="explanation">
+        <strong>推导步骤：</strong>
+        <ol>
+            <li><strong>建立坐标系：</strong> 我们在由 $y_0$ 和 $v$ 决定的平面内思考。可以选择一组正交基：一个是单位向量 $y_0$，另一个是与 $y_0$ 垂直的单位向量 $u = \frac{v}{\|v\|}$。这两个向量定义了一个二维平面。</li>
+            <li><strong>终点分解：</strong> 终点 $y_1$ 是从 $y_0$ 出发，沿着大圆弧（由基向量 $y_0$ 和 $u$ 定义）旋转角度 $\alpha = \|v\|$ 得到的点。因此，我们可以将 $y_1$ 分解到这两个基向量上。</li>
+            <li><strong>计算分量：</strong>
+                <ul>
+                    <li>在 $y_0$ 方向上的投影长度是 $\cos(\alpha)$，所以该分量是 $(\cos\alpha) y_0$。（图中红色虚线部分）</li>
+                    <li>在 $u$ 方向上的投影长度是 $\sin(\alpha)$，所以该分量是 $(\sin\alpha) u = (\sin\alpha) \frac{v}{\|v\|}$。（图中绿色虚线部分）</li>
+                </ul>
+            </li>
+            <li><strong>最终公式：</strong> 将两个分量相加，得到 $y_1 = (\cos\alpha) y_0 + (\sin\alpha) \frac{v}{\|v\|}$。将 $\alpha = \|v\|$ 代入，就得到了指数映射的公式。</li>
+        </ol>
+    </div>
+
+    <h2>总结</h2>
+    <p>这些公式看起来复杂，但它们的本质都是将球面上的“旋转”和“弧线”问题，转化为我们熟悉的、在二维平面内的向量分解和三角函数问题。通过这种方式，我们可以在弯曲的流形上进行精确的、可计算的几何操作。</p>
+</div>
+
+<svg height="0" width="0">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" /></marker>
+    <marker id="arrow_red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#dc3545"/></marker>
+    <marker id="arrow_blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0d6efd"/></marker>
+    <marker id="arrow_gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6c757d"/></marker>
+  </defs>
+</svg>
+
+</body>
+</html>
+

@@ -107,10 +107,11 @@
         .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
         .subtitle { margin-top: 10px; color: var(--muted); }
         .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
-        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; }
         .toc h3 { margin: 0 0 10px; font-size: 16px; }
-        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        .toc li { margin: 6px 0; }
+        .toc ul { list-style: none; padding: 0; margin: 0; }
+        .toc li { margin: 8px 0; }
     </style>
 </head>
 <body class="bg-background text-text-main antialiased">
@@ -124,18 +125,19 @@
   <div class="meta">作者：hhhhhyphen</div>
 </header>
 
-<nav class="toc">
-  <h3>目录</h3>
-  <ul>
-    <li><a href="#intro">引言</a></li>
-    <li><a href="#epsilon">Epsilon-Prediction 困境</a></li>
-    <li><a href="#vp">V-Prediction 设计</a></li>
-    <li><a href="#analogy">比喻</a></li>
-    <li><a href="#conclusion">结论</a></li>
-  </ul>
-</nav>
+<div class="container">
+  <nav class="toc">
+    <h3>目录</h3>
+    <ul>
+      <li><a href="#intro">引言</a></li>
+      <li><a href="#epsilon">Epsilon-Prediction 困境</a></li>
+      <li><a href="#vp">V-Prediction 设计</a></li>
+      <li><a href="#analogy">比喻</a></li>
+      <li><a href="#conclusion">结论</a></li>
+    </ul>
+  </nav>
 
-        <main class="space-y-12 md:space-y-20">
+  <section class="space-y-12 md:space-y-20">
 
             <!-- Section 1: The Core Question -->
             <section class="max-w-3xl mx-auto">
@@ -397,5 +399,7 @@
             update(parseFloat(slider.value));
         });
     </script>
+  </section>
+</div>
 </body>
 </html>

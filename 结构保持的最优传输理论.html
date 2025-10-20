@@ -40,10 +40,11 @@
         .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
         .subtitle { margin-top: 10px; color: var(--muted); }
         .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
-        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .cfm-container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; }
         .toc h3 { margin: 0 0 10px; font-size: 16px; }
-        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        .toc li { margin: 6px 0; }
+        .toc ul { list-style: none; padding: 0; margin: 0; }
+        .toc li { margin: 8px 0; }
     </style>
 </head>
 <body>
@@ -55,6 +56,7 @@
             <div class="meta">作者：hhhhhyphen</div>
         </header>
 
+        <div class="cfm-container">
         <nav class="toc">
             <h3>目录</h3>
             <ul>
@@ -63,6 +65,7 @@
                 <li><a href="#conclusion">结论：融合优雅与现实</a></li>
             </ul>
         </nav>
+        <div>
         <section>
             <h2 id="problem">问题的提出：优雅与现实的冲突</h2>
             <div class="warning">
@@ -161,6 +164,8 @@
             // MathJax v3 auto-typesets; no KaTeX render calls needed.
         });
     </script>
+</div>
+</div>
 </body>
 </html>
 

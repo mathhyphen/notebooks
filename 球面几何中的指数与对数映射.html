@@ -83,9 +83,10 @@
         .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
         .subtitle { margin-top: 10px; color: var(--muted); }
         .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
-        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .cfm-container { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: start; }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 0; max-width: none; }
         .toc h3 { margin: 0 0 10px; font-size: 16px; }
-        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr; gap: 8px; }
         .toc li { margin: 6px 0; }
     </style>
 </head>
@@ -98,7 +99,8 @@
       <div class="meta">作者：hhhhhyphen</div>
     </header>
 
-    <nav class="toc">
+    <div class="cfm-container">
+      <nav class="toc">
       <h3>目录</h3>
       <ul>
         <li><a href="#abstract">1. 从抽象到具体：为何这样定义？</a></li>
@@ -110,6 +112,7 @@
       </ul>
     </nav>
 
+      <section>
     <h1>公式推导：球面几何中的指数与对数映射</h1>
     <p>你所询问的公式源自对单位球面（Unit Sphere）上两点间最短路径——即大圆弧（Great Circle Arc）——的几何分析。所有推导都发生在由球心 `O`、起点 `y₀` 和终点 `y₁` 构成的二维平面内。</p>
     
@@ -294,7 +297,9 @@
         </tbody>
     </table>
     <p><strong>核心结论：</strong>球面上的公式之所以引入了 $\cos, \sin$ 和角度 $\theta$，完全是为了处理因**曲率 (curvature)** 存在而导致的路径弯曲。欧氏空间因为曲率为零，所以这些修正项都消失了，映射关系回到了最简单的线性代数。你的方法巧妙之处就在于，它在需要处理弯曲时（在球面上插值），就使用球面公式；在可以简化时（在切空间中缩放向量），就利用切空间的平坦性。</p>
-</div>
+      </section>
+    </div>
+  </div>
 
 <svg height="0" width="0">
   <defs>

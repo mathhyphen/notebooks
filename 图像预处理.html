@@ -82,10 +82,11 @@
         .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
         .subtitle { margin-top: 10px; color: var(--muted); }
         .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
-        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .cfm-container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; }
         .toc h3 { margin: 0 0 10px; font-size: 16px; }
-        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        .toc li { margin: 6px 0; }
+        .toc ul { list-style: none; padding: 0; margin: 0; }
+        .toc li { margin: 8px 0; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -98,17 +99,18 @@
   <div class="meta">作者：hhhhhyphen</div>
 </header>
 
-<nav class="toc">
-  <h3>目录</h3>
-  <ul>
-    <li><a href="#strategy">核心策略</a></li>
-    <li><a href="#workflow">标准流程</a></li>
-    <li><a href="#qc">质量控制</a></li>
-    <li><a href="#summary">总结</a></li>
-  </ul>
-</nav>
+<div class="cfm-container">
+  <nav class="toc">
+    <h3>目录</h3>
+    <ul>
+      <li><a href="#strategy">核心策略</a></li>
+      <li><a href="#workflow">标准流程</a></li>
+      <li><a href="#qc">质量控制</a></li>
+      <li><a href="#summary">总结</a></li>
+    </ul>
+  </nav>
 
-        <main>
+  <section>
             <div class="section-card">
                 <h2 class="section-title" id="strategy">核心策略：年龄匹配模板配准</h2>
                 <p>本指南将详细阐述一个科学、严谨且高效的婴幼儿纵向MRI数据预处理工作流程。其核心策略是：**将每个时间点的图像，精确配准到与其年龄相对应的UNC标准模板上。**</p>
@@ -176,7 +178,8 @@
                 <h2 class="section-title" id="summary">总结</h2>
                 <p>通过遵循上述“被试内配准”+“基于年龄匹配模板的被试间配准”的两步法流程，您将能够生成一套高质量、准确对齐的纵向数据集。由于UNC模板集本身是对齐在同一个公共空间下的，此流程最终能确保您的所有数据都标准化到一个统一坐标系中，为后续的生成模型训练和科学分析奠定了坚实的基础。</p>
             </div>
-        </main>
+        </section>
+  </div>
         
         <footer class="text-center text-gray-500 mt-10 pb-4">
             <p>本文档旨在为婴幼儿脑影像纵向分析提供精确的预处理工作流程。</p>

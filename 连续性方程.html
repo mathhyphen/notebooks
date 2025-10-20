@@ -49,10 +49,11 @@
         .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
         .subtitle { margin-top: 10px; color: var(--muted); }
         .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
-        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .cfm-container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; }
         .toc h3 { margin: 0 0 10px; font-size: 16px; }
-        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        .toc li { margin: 6px 0; }
+        .toc ul { list-style: none; padding: 0; margin: 0; }
+        .toc li { margin: 8px 0; }
     </style>
     <!-- Chosen Palette: Warm Taupe -->
     <!-- Application Structure Plan: The application is structured as a linear, scroll-driven narrative. This step-by-step format is ideal for explaining a mathematical derivation, as each section builds logically on the previous one. The flow starts with the intuitive physical setup (a control volume), introduces the concept of flux, explains the key mathematical tool (Divergence Theorem) with an interactive visualization, and finally combines everything to reach the conclusion. This narrative structure is chosen over a dashboard because the goal is guided learning and understanding a specific process, not open-ended data exploration. -->
@@ -70,6 +71,7 @@
             <div class="meta">作者：hhhhhyphen</div>
         </header>
 
+        <div class="cfm-container">
         <nav class="toc">
             <h3>目录</h3>
             <ul>
@@ -79,6 +81,8 @@
                 <li><a href="#summary">小结</a></li>
             </ul>
         </nav>
+
+        <div>
 
         <!-- Section 1: Core Idea -->
         <section class="mb-16 step-section">
@@ -164,6 +168,9 @@
                 这就是**连续性方程**。它完美地表达了概率守恒的物理思想：任何一点的概率密度随时间的变化，都精确地由其周围概率的流入和流出（即通量的散度）所决定。
             </p>
         </section>
+
+        </div>
+        </div>
 
     </main>
 

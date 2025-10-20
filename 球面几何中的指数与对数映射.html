@@ -69,48 +69,51 @@
             border-radius: 4px;
             margin: 1rem 0;
         }
-        .connection {
-            background-color: #e7f5ff;
-            padding: 1rem;
-            border-left: 5px solid #228be6;
-            border-radius: 4px;
-            margin: 1rem 0;
-        }
-        .definition {
-            background-color: #fffbe6;
-            padding: 1rem;
-            border-left: 5px solid #f59e0b;
-            border-radius: 4px;
-            margin: 1rem 0;
-        }
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-        }
-        .summary-table th, .summary-table td {
-            border: 1px solid var(--border-color);
-            padding: 0.75rem;
-            text-align: left;
-        }
-        .summary-table th {
-            background-color: #f8f9fa;
-        }
+        .connection { background-color: #e7f5ff; padding: 1rem; border-left: 5px solid #228be6; border-radius: 4px; margin: 1rem 0; }
+        .definition { background-color: #fffbe6; padding: 1rem; border-left: 5px solid #f59e0b; border-radius: 4px; margin: 1rem 0; }
+        .summary-table { width: 100%; border-collapse: collapse; margin: 2rem 0; }
+        .summary-table th, .summary-table td { border: 1px solid var(--border-color); padding: 0.75rem; text-align: left; }
+        .summary-table th { background-color: #f8f9fa; }
         .svg-container { text-align: center; margin: 2rem 0; background-color: #fcfdff; padding: 1rem; border-radius: 8px; border: 1px solid #e9ecef;}
-        code {
-            background-color: #e9ecef;
-            color: var(--accent-red);
-            padding: 0.2em 0.4em;
-            border-radius: 4px;
-        }
+        code { background-color: #e9ecef; color: var(--accent-red); padding: 0.2em 0.4em; border-radius: 4px; }
+        /* CFM 布局与导航样式 */
+        :root { --panel: #ffffff; --text: #1f2937; --muted: #6b7280; --brand1: #0ea5e9; --brand2: #10b981; --brand3: #8b5cf6; --shadow: 0 10px 30px rgba(2, 6, 23, 0.12); }
+        .hero { background: radial-gradient(1200px circle at 10% 0%, rgba(14,165,233,0.12), transparent 40%), radial-gradient(1000px circle at 90% 0%, rgba(139,92,246,0.12), transparent 40%), linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); padding: 56px 24px 28px; text-align: center; border-bottom: 1px solid #e5e7eb; }
+        .badge { display:inline-block; background: linear-gradient(90deg, var(--brand1), var(--brand3)); color:white; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+        .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
+        .subtitle { margin-top: 10px; color: var(--muted); }
+        .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .toc h3 { margin: 0 0 10px; font-size: 16px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .toc li { margin: 6px 0; }
     </style>
 </head>
 <body>
 <div class="container">
+    <header class="hero">
+      <span class="badge">Geometry · Sphere</span>
+      <div class="title">球面几何中的指数与对数映射</div>
+      <div class="subtitle">指数映射与对数映射推导与直觉</div>
+      <div class="meta">作者：hhhhhyphen</div>
+    </header>
+
+    <nav class="toc">
+      <h3>目录</h3>
+      <ul>
+        <li><a href="#abstract">1. 从抽象到具体：为何这样定义？</a></li>
+        <li><a href="#euclid">2. 欧氏空间中的特例：连接几何与函数</a></li>
+        <li><a href="#setup">3. 基础设定</a></li>
+        <li><a href="#logmap">4. 对数映射推导</a></li>
+        <li><a href="#expmap">5. 指数映射推导</a></li>
+        <li><a href="#summary">6. 总结</a></li>
+      </ul>
+    </nav>
+
     <h1>公式推导：球面几何中的指数与对数映射</h1>
     <p>你所询问的公式源自对单位球面（Unit Sphere）上两点间最短路径——即大圆弧（Great Circle Arc）——的几何分析。所有推导都发生在由球心 `O`、起点 `y₀` 和终点 `y₁` 构成的二维平面内。</p>
     
-    <h2>1. 从抽象到具体：为何这样定义？</h2>
+    <h2 id="abstract">1. 从抽象到具体：为何这样定义？</h2>
     <p>在深入球面的具体计算之前，我们先理解指数和对数映射在所有流形上的<strong>通用抽象定义</strong>。这一定义基于一个核心概念：<strong>测地线 (Geodesic)</strong>。</p>
     <div class="definition">
         <strong>核心概念：测地线 (Geodesic)</strong>
@@ -126,7 +129,7 @@
     </div>
     <p><strong>关键连接点：</strong>你看到的球面公式，正是上述抽象定义的<strong>具体解析解 (analytical solution)</strong>。因为球面的几何性质良好，我们可以用三角函数精确地写出“沿着大圆弧行进”这一过程的数学表达式。对于更复杂的流形，这样的封闭解可能不存在，需要依赖数值方法。    </p>
 
-    <h2>2. 欧氏空间中的特例：连接几何与函数</h2>
+    <h2 id="euclid">2. 欧氏空间中的特例：连接几何与函数</h2>
     <p>为了建立直觉，让我们看看在最简单的流形——欧氏平面（$\mathbb{R}^n$）上，这些映射会变成什么，以及它们如何与我们熟悉的指数/对数函数产生联系。</p>
     <div class="explanation">
         <ul>
@@ -167,7 +170,7 @@
     <p><strong>结论：</strong> “指数映射”这个术语，是从描述数量增长的 $e^t$ **推广** 到描述空间路径的几何概念。它们都代表了从一个“初始状态”（一个点、一个值）和一个“变化率”（一个切向量、一个增长率），通过求解一个简单的微分方程来得到“最终状态”的过程。在平坦的欧氏空间，这个过程恰好简化成了向量加法，掩盖了它与 $e^t$ 的深刻渊源。而在弯曲的流形上，这个过程就变得复杂，需要用到三角函数来描述。</p>
 
 
-    <h2>3. 基础设定 (球面)</h2>
+    <h2 id="setup">3. 基础设定 (球面)</h2>
     <div class="explanation">
         <ul>
             <li>我们在一个单位球面上，所以所有点的向量模长（到球心的距离）为1，即 $\|y_0\| = \|y_1\| = 1$。</li>
@@ -177,7 +180,7 @@
         </ul>
     </div>
 
-    <h2>4. 对数映射 (Logarithm Map) 的推导 (球面)</h2>
+    <h2 id="logmap">4. 对数映射 (Logarithm Map) 的推导 (球面)</h2>
     <p><strong>目标：</strong>找到一个位于 $y_0$ 切空间中的向量 $v$，它的方向指向 $y_1$，且长度等于弧长 $\theta$。这完全符合对数映射的抽象定义。</p>
     <div class="formula-box">
         $$ \log_{y_0}(y_1) = \frac{\theta}{\sin\theta} \left( y_1 - (\cos\theta) y_0 \right) $$
@@ -220,7 +223,7 @@
         </ol>
     </div>
 
-    <h2>5. 指数映射 (Exponential Map) 的推导 (球面)</h2>
+    <h2 id="expmap">5. 指数映射 (Exponential Map) 的推导 (球面)</h2>
     <p><strong>目标：</strong> 从起点 $y_0$ 出发，沿着切空间中的向量 $v$ 的方向，在球面上行进 $\|v\|$ 的距离，找到终点。这正是指数映射抽象定义的具体化。</p>
     <div class="formula-box">
         $$ \exp_{y_0}(v) = (\cos\|v\|) y_0 + \left(\frac{\sin\|v\|}{\|v\|}\right) v $$
@@ -262,7 +265,7 @@
         </ol>
     </div>
 
-    <h2>6. 总结：欧氏空间 vs. 球面</h2>
+    <h2 id="summary">6. 总结：欧氏空间 vs. 球面</h2>
     <p>现在，我们可以清晰地看到两者的区别与联系。</p>
     <table class="summary-table">
         <thead>
@@ -298,7 +301,7 @@
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" /></marker>
     <marker id="arrow_red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#dc3545"/></marker>
     <marker id="arrow_blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0d6efd"/></marker>
-    <marker id="arrow_gray" viewBox="0 tobi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6c757d"/></marker>
+    <marker id="arrow_gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6c757d"/></marker>
   </defs>
 </svg>
 

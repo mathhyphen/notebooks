@@ -24,64 +24,47 @@
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js" defer></script>
     <style>
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-        line-height: 1.8;
-        background-color: #f8f9fa;
-        color: #343a40;
-        margin: 0;
-        padding: 20px;
-      }
-      .container {
-        max-width: 900px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        padding: 30px 40px;
-        border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-        border: 1px solid #dee2e6;
-      }
-      header { text-align: center; border-bottom: 2px solid #e9ecef; padding-bottom: 20px; margin-bottom: 30px; }
-      h1 { font-size: 2.5em; color: #212529; }
-      h2 { font-size: 1.8em; color: #28a745; border-left: 5px solid #28a745; padding-left: 15px; margin-top: 40px; }
-      p, li { font-size: 1.1em; text-align: justify; }
-      .warning { background-color: #fff3cd; border: 1px solid #ffeeba; padding: 20px; border-radius: 8px; margin: 20px 0; }
-      .formula { background-color: #f1f3f5; padding: 20px; border-radius: 8px; margin: 20px 0; overflow-x: auto; }
-      .image-gallery { display: flex; justify-content: space-around; align-items: center; margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
-      .image-gallery figure { text-align: center; }
-      .image-gallery img { width: 150px; height: 150px; object-fit: contain; border: 1px solid #ced4da; border-radius: 4px; background-color: white; }
-      .arrow { font-size: 2.5em; color: #6c757d; }
-      footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e9ecef; font-size: 0.9em; color: #6c757d; }
-      /* Prism 代码块容器优化，统一为 CFM 风格 */
-      pre[class*="language-"] {
-        border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: var(--shadow);
-        margin: 12px 0; padding: 14px; background: #0b1220;
-      }
-      .prism-title {
-        display: inline-block; margin-bottom: 6px; font-size: 12px; color: #64748b;
-        background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 999px; padding: 2px 8px;
-      }
-      /* 调整 line-numbers 插件的样式 */
-      pre.line-numbers { position: relative; padding-left: 3.5em; }
-      .line-numbers .line-numbers-rows { border-right: 1px solid rgba(255,255,255,0.08); }
-      /* Inline code 统一为 CFM 风格 */
-      code:not(pre code) {
-        border: 1px solid #d1d5db; color: #111827; padding: 2px 6px; border-radius: 6px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-        background: #f8fafc;
-        font-size: 0.9em;
-      }
+        body { font-family: 'Noto Sans SC', sans-serif; background: #f8fafc; color: #1f2937; }
+        .container { max-width: 960px; margin: 0 auto; padding: 24px; }
+        h1 { font-size: 28px; font-weight: 800; }
+        h2 { font-size: 22px; font-weight: 700; margin-top: 16px; }
+        /* Inline code 和 Prism 代码块统一 CFM 风格 */
+        code:not(pre code) { border: 1px solid #d1d5db; color: #111827; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); background: #f8fafc; font-size: 0.9em; }
+        pre[class*="language-"] { border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: var(--shadow); margin: 12px 0; padding: 14px; background: #0b1220; }
+        pre.line-numbers { position: relative; padding-left: 3.5em; }
+        .line-numbers .line-numbers-rows { border-right: 1px solid rgba(255,255,255,0.08); }
+        /* CFM 布局与导航样式 */
+        :root { --panel: #ffffff; --text: #1f2937; --muted: #6b7280; --brand1: #0ea5e9; --brand2: #10b981; --brand3: #8b5cf6; --shadow: 0 10px 30px rgba(2, 6, 23, 0.12); }
+        .hero { background: radial-gradient(1200px circle at 10% 0%, rgba(14,165,233,0.12), transparent 40%), radial-gradient(1000px circle at 90% 0%, rgba(139,92,246,0.12), transparent 40%), linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); padding: 56px 24px 28px; text-align: center; border-bottom: 1px solid #e5e7eb; }
+        .badge { display:inline-block; background: linear-gradient(90deg, var(--brand1), var(--brand3)); color:white; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+        .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
+        .subtitle { margin-top: 10px; color: var(--muted); }
+        .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .toc h3 { margin: 0 0 10px; font-size: 16px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .toc li { margin: 6px 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>结构保持的最优传输理论</h1>
-            <p><strong>如何改造OT，使其适用于医学图像配准等需要保持结构连续性的任务</strong></p>
+        <header class="hero">
+            <span class="badge">Optimal Transport</span>
+            <div class="title">结构保持的最优传输理论</div>
+            <div class="subtitle">寻求最优映射的数学框架与算法</div>
+            <div class="meta">作者：hhhhhyphen</div>
         </header>
 
+        <nav class="toc">
+            <h3>目录</h3>
+            <ul>
+                <li><a href="#problem">问题的提出：优雅与现实的冲突</a></li>
+                <li><a href="#idea">核心思路：为“搬运计划”增加“平滑”规则</a></li>
+                <li><a href="#conclusion">结论：融合优雅与现实</a></li>
+            </ul>
+        </nav>
         <section>
-            <h2>问题的提出：优雅与现实的冲突</h2>
+            <h2 id="problem">问题的提出：优雅与现实的冲突</h2>
             <div class="warning">
                 <strong>核心挑战：</strong> 经典的最优传输(OT)理论允许质量“瞬移”和“撕裂”，这使得它能处理拓扑变化，但也意味着它无法保证解剖结构的连续性。在医学图像配准中，我们绝不希望大脑或器官的结构在对齐中断裂。
             </div>
@@ -91,7 +74,7 @@
         </section>
 
         <section>
-            <h2>核心思路：为“搬运计划”增加“平滑”规则</h2>
+            <h2 id="idea">核心思路：为“搬运计划”增加“平滑”规则</h2>
             <p>
                 解决问题的关键在于，我们不能再仅仅寻找“成本最低”的搬运计划，而是要寻找一个在“成本”和“平滑度”之间达到最佳平衡的计划。这主要通过两种途径实现。
             </p>
@@ -160,7 +143,7 @@
         </section>
 
         <section>
-            <h2>结论：融合优雅与现实</h2>
+            <h2 id="conclusion">结论：融合优雅与现实</h2>
             <p>
                 通过正则化或引入流体力学框架，最优传输理论成功地被改造，以适应需要保持结构连续性的任务。这些扩展方法不仅保留了OT处理质量分布的强大能力，还为其赋予了生成平滑、物理可信形变场的功能。
             </p>

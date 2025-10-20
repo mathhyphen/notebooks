@@ -72,19 +72,45 @@
         }
         pre.line-numbers { position: relative; padding-left: 3.5em; }
         .line-numbers .line-numbers-rows { border-right: 1px solid rgba(255,255,255,0.08); }
+        /* CFM 布局与导航样式 */
+        :root { --panel: #ffffff; --text: #1f2937; --muted: #6b7280; --brand1: #0ea5e9; --brand2: #10b981; --brand3: #8b5cf6; --shadow: 0 10px 30px rgba(2, 6, 23, 0.12); }
+        .hero { background: radial-gradient(1200px circle at 10% 0%, rgba(14,165,233,0.12), transparent 40%),
+                 radial-gradient(1000px circle at 90% 0%, rgba(139,92,246,0.12), transparent 40%),
+                 linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+                 padding: 56px 24px 28px; text-align: center; border-bottom: 1px solid #e5e7eb; }
+        .badge { display:inline-block; background: linear-gradient(90deg, var(--brand1), var(--brand3)); color:white; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+        .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
+        .subtitle { margin-top: 10px; color: var(--muted); }
+        .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .toc h3 { margin: 0 0 10px; font-size: 16px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .toc li { margin: 6px 0; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
     <div class="container mx-auto p-4 md:p-8 max-w-5xl">
-        <header class="text-center mb-10">
-            <h1 class="text-4xl font-bold text-gray-900">婴幼儿MRI纵向数据配准工作流程</h1>
-            <p class="text-xl text-gray-600 mt-2">基于年龄匹配模板的精确配准方案</p>
-        </header>
+        <header class="hero">
+  <span class="badge">Medical Imaging · Registration</span>
+  <div class="title">婴幼儿MRI纵向数据配准工作流程</div>
+  <div class="subtitle">基于年龄匹配模板的精确配准方案</div>
+  <div class="meta">作者：hhhhhyphen</div>
+</header>
+
+<nav class="toc">
+  <h3>目录</h3>
+  <ul>
+    <li><a href="#strategy">核心策略</a></li>
+    <li><a href="#workflow">标准流程</a></li>
+    <li><a href="#qc">质量控制</a></li>
+    <li><a href="#summary">总结</a></li>
+  </ul>
+</nav>
 
         <main>
             <div class="section-card">
-                <h2 class="section-title">核心策略：年龄匹配模板配准</h2>
+                <h2 class="section-title" id="strategy">核心策略：年龄匹配模板配准</h2>
                 <p>本指南将详细阐述一个科学、严谨且高效的婴幼儿纵向MRI数据预处理工作流程。其核心策略是：**将每个时间点的图像，精确配准到与其年龄相对应的UNC标准模板上。**</p>
                 <div class="alert alert-info mt-4">
                     <strong>策略原则</strong>：几月的图像，就配准到几月的UNC模板。
@@ -93,7 +119,7 @@
             </div>
 
             <div class="section-card">
-                <h2 class="section-title">标准两步法工作流程</h2>
+                <h2 class="section-title" id="workflow">标准两步法工作流程</h2>
                 <p>为了在标准化数据的同时最大限度地保留真实的生物学信息，推荐采用以下两步法流程。</p>
 
                 <h3 class="subsection-title">第一步：被试内配准 (Intra-Subject Registration)</h3>
@@ -128,7 +154,7 @@
             </div>
             
             <div class="section-card">
-                <h2 class="section-title">关键步骤：质量控制 (Quality Control)</h2>
+                <h2 class="section-title" id="qc">关键步骤：质量控制 (Quality Control)</h2>
                 <p>完成所有配准后，必须进行目视检查，以确保配准的质量。这是保证最终分析结果可靠性的生命线。</p>
                 <p class="mt-2"><strong>推荐工具</strong>：FSLeyes, ITK-SNAP, 3D Slicer 等专业影像浏览器。</p>
                 <h3 class="subsection-title">检查方法：与模板叠加</h3>
@@ -147,7 +173,7 @@
             </div>
 
             <div class="section-card">
-                <h2 class="section-title">总结</h2>
+                <h2 class="section-title" id="summary">总结</h2>
                 <p>通过遵循上述“被试内配准”+“基于年龄匹配模板的被试间配准”的两步法流程，您将能够生成一套高质量、准确对齐的纵向数据集。由于UNC模板集本身是对齐在同一个公共空间下的，此流程最终能确保您的所有数据都标准化到一个统一坐标系中，为后续的生成模型训练和科学分析奠定了坚实的基础。</p>
             </div>
         </main>

@@ -97,23 +97,50 @@
             background: #f8fafc;
             font-size: 0.9em;
         }
+        /* CFM 布局与导航样式 */
+        :root { --panel: #ffffff; --text: #1f2937; --muted: #6b7280; --brand1: #0ea5e9; --brand2: #10b981; --brand3: #8b5cf6; --shadow: 0 10px 30px rgba(2, 6, 23, 0.12); }
+        .hero { background: radial-gradient(1200px circle at 10% 0%, rgba(14,165,233,0.12), transparent 40%),
+                 radial-gradient(1000px circle at 90% 0%, rgba(139,92,246,0.12), transparent 40%),
+                 linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+                 padding: 56px 24px 28px; text-align: center; border-bottom: 1px solid #e5e7eb; }
+        .badge { display:inline-block; background: linear-gradient(90deg, var(--brand1), var(--brand3)); color:white; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+        .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
+        .subtitle { margin-top: 10px; color: var(--muted); }
+        .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
+        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 16px auto; max-width: 800px; }
+        .toc h3 { margin: 0 0 10px; font-size: 16px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .toc li { margin: 6px 0; }
     </style>
 </head>
 <body class="bg-background text-text-main antialiased">
 
     <div class="container mx-auto px-4 py-8 md:py-12">
         
-        <header class="text-center mb-12 md:mb-16">
-            <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-2">V-Prediction 权重之谜</h1>
-            <p class="text-lg md:text-xl text-gray-600">理论与实践的交互式探索</p>
-        </header>
+        <header class="hero">
+  <span class="badge">Flow Matching · Diffusion</span>
+  <div class="title">V-Prediction 权重之谜</div>
+  <div class="subtitle">理论与实践的交互式探索</div>
+  <div class="meta">作者：hhhhhyphen</div>
+</header>
+
+<nav class="toc">
+  <h3>目录</h3>
+  <ul>
+    <li><a href="#intro">引言</a></li>
+    <li><a href="#epsilon">Epsilon-Prediction 困境</a></li>
+    <li><a href="#vp">V-Prediction 设计</a></li>
+    <li><a href="#analogy">比喻</a></li>
+    <li><a href="#conclusion">结论</a></li>
+  </ul>
+</nav>
 
         <main class="space-y-12 md:space-y-20">
 
             <!-- Section 1: The Core Question -->
             <section class="max-w-3xl mx-auto">
                 <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
-                    <h2 class="text-2xl font-bold mb-4 text-gray-700">一个矛盾：理论推导 vs. 工程实践</h2>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-700" id="intro">一个矛盾：理论推导 vs. 工程实践</h2>
                     <p class="text-base md:text-lg leading-relaxed">
                         您好！我们从 Flow Matching 的第一性原理严格推导发现，无论是 Epsilon-prediction还是 V-prediction，它们的损失函数都应该带有一个复杂的、与时间 `t` 相关的权重 \(\lambda(t)\)。
                     </p>
@@ -131,7 +158,7 @@
             
             <!-- Section 2: Epsilon-Prediction's Dilemma -->
             <section class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700">1. Epsilon-Prediction 的“不平衡”困境</h2>
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700" id="epsilon">1. Epsilon-Prediction 的“不平衡”困境</h2>
                 <div class="grid md:grid-cols-2 gap-8 items-center">
                     <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
                         <h3 class="text-xl font-semibold mb-3 text-gray-700">学习难度的巨大差异</h3>
@@ -172,7 +199,7 @@
 
             <!-- Section 3: The Genius of V-Prediction -->
             <section class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700">2. V-Prediction 的“天然平衡”设计</h2>
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700" id="vp">2. V-Prediction 的“天然平衡”设计</h2>
                 <p class="text-center max-w-3xl mx-auto mb-10 text-lg">
                     V-Prediction 的巧妙之处在于，它设计的回归目标 \(v\) 本身，在数值尺度上是**天然平衡**的。让我们通过下面的交互模块来亲身体验一下。
                 </p>
@@ -223,7 +250,7 @@
 
             <!-- Section 4: Analogy -->
              <section class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700">3. 一个比喻：聪明的教练</h2>
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700" id="analogy">3. 一个比喻：聪明的教练</h2>
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
                         <div class="text-3xl mb-3">🏋️</div>
@@ -244,7 +271,7 @@
             
             <!-- Section 5: Conclusion -->
             <section class="max-w-3xl mx-auto text-center">
-                <h2 class="text-3xl font-bold mb-4 text-gray-700">结论</h2>
+                <h2 class="text-3xl font-bold mb-4 text-gray-700" id="conclusion">结论</h2>
                 <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
                     <p class="text-lg leading-relaxed">
                         V-prediction 损失函数在实践中可以不带权重，并非经验上的妥协，而是**设计上的胜利**。

@@ -7,28 +7,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- PrismJS for colored code blocks -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-okaidia.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js" defer></script>
-    <!-- Unify MathJax v3 config to chtml output -->
     <script>
         window.MathJax = {
           tex: {
-            inlineMath: [["$", "$"], ["\\(", "\\)"]],
-            displayMath: [["$$","$$"], ["\\[","\\]"]],
-            processEscapes: true
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']]
           },
-          options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
-          chtml: { scale: 1.0 }
+          svg: {
+            fontCache: 'global'
+          }
         };
     </script>
-    <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <style>
         :root {
             --bg-main: #f8f9fa;
@@ -79,44 +69,105 @@
             border-radius: 4px;
             margin: 1rem 0;
         }
+        .connection {
+            background-color: #e7f5ff;
+            padding: 1rem;
+            border-left: 5px solid #228be6;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        .definition {
+            background-color: #fffbe6;
+            padding: 1rem;
+            border-left: 5px solid #f59e0b;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+        .summary-table th, .summary-table td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .summary-table th {
+            background-color: #f8f9fa;
+        }
         .svg-container { text-align: center; margin: 2rem 0; background-color: #fcfdff; padding: 1rem; border-radius: 8px; border: 1px solid #e9ecef;}
-        /* Inline code 统一为 CFM 风格 */
-        code:not(pre code) {
-            border: 1px solid #d1d5db; color: #111827; padding: 2px 6px; border-radius: 6px;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-            background: #f8fafc;
-            font-size: 0.9em;
+        code {
+            background-color: #e9ecef;
+            color: var(--accent-red);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
         }
-        /* Prism 代码块容器优化，统一为 CFM 风格 */
-        pre[class*="language-"] {
-            border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: var(--shadow);
-            margin: 12px 0; padding: 14px; background: #0b1220;
-        }
-        .prism-title {
-            display: inline-block; margin-bottom: 6px; font-size: 12px; color: #64748b;
-            background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 999px; padding: 2px 8px;
-        }
-        /* 调整 line-numbers 插件的样式 */
-        pre.line-numbers { position: relative; padding-left: 3.5em; }
-        .line-numbers .line-numbers-rows { border-right: 1px solid rgba(255,255,255,0.08); }
-        .toc { display:flex; gap:10px; flex-wrap:wrap; margin: 0.8rem 0 1.2rem; }
-        .toc a { background-color:#f1f3f5; border:1px solid var(--border-color); color: var(--text-secondary); padding:6px 10px; border-radius:999px; font-size:0.95rem; text-decoration:none; }
-        .toc a:hover { color: var(--accent-primary); border-color: var(--accent-primary); background:#eef6ff; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>公式推导：球面几何中的指数与对数映射</h1>
-    <nav class="toc">
-      <a href="#setup">基础设定</a>
-      <a href="#logmap">对数映射</a>
-      <a href="#expmap">指数映射</a>
-      <a href="#summary">总结</a>
-      <a href="index.html">返回首页</a>
-    </nav>
     <p>你所询问的公式源自对单位球面（Unit Sphere）上两点间最短路径——即大圆弧（Great Circle Arc）——的几何分析。所有推导都发生在由球心 `O`、起点 `y₀` 和终点 `y₁` 构成的二维平面内。</p>
+    
+    <h2>1. 从抽象到具体：为何这样定义？</h2>
+    <p>在深入球面的具体计算之前，我们先理解指数和对数映射在所有流形上的<strong>通用抽象定义</strong>。这一定义基于一个核心概念：<strong>测地线 (Geodesic)</strong>。</p>
+    <div class="definition">
+        <strong>核心概念：测地线 (Geodesic)</strong>
+        <p>测地线是流形上“最直的路径”，是欧氏空间中“直线”概念的推广。在单位球面上，两点之间的测地线就是连接它们的大圆弧。</p>
+    </div>
+    <div class="definition">
+        <strong>指数映射 (Exponential Map) - 抽象定义</strong>
+        <p><code>exp_p(v)</code> 的普遍定义是：在流形上的点 <code>p</code> 出发，沿着以切向量 <code>v</code> 为初始速度的<strong>唯一测地线</strong>行进 1 个单位时间。最终到达的点就是 <code>exp_p(v)</code>。本质上，它回答：“从 p 点出发，朝着 v 方向走 ‘直线’，会到达哪里？”</p>
+    </div>
+     <div class="definition">
+        <strong>对数映射 (Logarithm Map) - 抽象定义</strong>
+        <p><code>log_p(q)</code> 是指数映射的逆过程。它寻找一个初始速度向量 <code>v</code>，使得从 <code>p</code> 点沿着以 <code>v</code> 为初速度的测地线行进 1 个单位时间后，恰好能到达 <code>q</code> 点。本质上，它回答：“要从 p ‘走直线’到 q，我出发时的方向和速度应该是什么？”</p>
+    </div>
+    <p><strong>关键连接点：</strong>你看到的球面公式，正是上述抽象定义的<strong>具体解析解 (analytical solution)</strong>。因为球面的几何性质良好，我们可以用三角函数精确地写出“沿着大圆弧行进”这一过程的数学表达式。对于更复杂的流形，这样的封闭解可能不存在，需要依赖数值方法。    </p>
 
-    <h2>1. 基础设定</h2>
+    <h2>2. 欧氏空间中的特例：连接几何与函数</h2>
+    <p>为了建立直觉，让我们看看在最简单的流形——欧氏平面（$\mathbb{R}^n$）上，这些映射会变成什么，以及它们如何与我们熟悉的指数/对数函数产生联系。</p>
+    <div class="explanation">
+        <ul>
+            <li><strong>流形 (Manifold):</strong> 就是我们熟悉的平坦空间本身。</li>
+            <li><strong>测地线 (Geodesic):</strong> 两点 $p, q$ 之间的“最直路径”就是连接它们的<strong>直线段</strong>。</li>
+            <li><strong>切空间 (Tangent Space):</strong> 在平坦空间中，任何一点 $p$ 的切空间 $T_p\mathbb{R}^n$ <strong>就是 $\mathbb{R}^n$ 它自己</strong>。</li>
+        </ul>
+    </div>
+    
+    <h3>2.1 几何形式：退化为向量运算</h3>
+    <p>在欧氏空间，“沿着测地线（直线）匀速运动”的路径由微分方程 $\gamma''(t) = 0$ 描述（加速度为零）。其解为 $\gamma(t) = p + tv$，其中 $p$ 是起点，$v$ 是速度。</p>
+    <ul>
+        <li><strong>指数映射 $\exp_p(v)$：</strong>是路径在 $t=1$ 时的位置，即 $\gamma(1) = p+v$。</li>
+        <li><strong>对数映射 $\log_p(q)$：</strong>是找到速度 $v$ 使得 $p+v=q$，即 $v = q-p$。</li>
+    </ul>
+    <div class="formula-box">
+        $\exp_p(v) = p + v$ <br>
+        $\log_p(q) = q - p$
+    </div>
+    <p>这看起来和函数 $e^x$ 毫无关系。那么，它们的名字为何相同呢？</p>
+
+    <h3>2.2 函数形式：与 $e^x$ 和 $\ln(x)$ 的深层联系</h3>
+    <div class="connection">
+        <strong>核心思想：</strong>几何的指数映射和函数的指数映射，都可被视为描述“最基本、最自然过程”的微分方程的解。
+    </div>
+    <ul>
+        <li>
+            <strong>几何指数映射</strong> 描述的是 **空间位置** 的变化。最自然的空间运动是“匀速直线运动”，其微分方程是加速度为零：
+            $$ \gamma''(t) = 0 $$
+            给定初始位置 $\gamma(0)=p$ 和初始速度 $\gamma'(0)=v$，解是 $\gamma(t) = p+tv$。
+        </li>
+        <li>
+            <strong>函数指数映射</strong> 描述的是 **数量大小** 的变化。最自然的数量增长是“增长率与当前数量成正比”（例如复利、细胞分裂），其微分方程是：
+            $$ f'(t) = f(t) $$
+            给定初始值 $f(0)=1$，解就是我们熟悉的指数函数 $f(t) = e^t$。
+        </li>
+    </ul>
+    <p><strong>结论：</strong> “指数映射”这个术语，是从描述数量增长的 $e^t$ **推广** 到描述空间路径的几何概念。它们都代表了从一个“初始状态”（一个点、一个值）和一个“变化率”（一个切向量、一个增长率），通过求解一个简单的微分方程来得到“最终状态”的过程。在平坦的欧氏空间，这个过程恰好简化成了向量加法，掩盖了它与 $e^t$ 的深刻渊源。而在弯曲的流形上，这个过程就变得复杂，需要用到三角函数来描述。</p>
+
+
+    <h2>3. 基础设定 (球面)</h2>
     <div class="explanation">
         <ul>
             <li>我们在一个单位球面上，所以所有点的向量模长（到球心的距离）为1，即 $\|y_0\| = \|y_1\| = 1$。</li>
@@ -126,8 +177,8 @@
         </ul>
     </div>
 
-    <h2>2. 对数映射 (Logarithm Map) 的推导</h2>
-    <p><strong>目标：</strong>找到一个位于 $y_0$ 切空间中的向量 $v$，它的方向指向 $y_1$，且长度等于弧长 $\theta$。</p>
+    <h2>4. 对数映射 (Logarithm Map) 的推导 (球面)</h2>
+    <p><strong>目标：</strong>找到一个位于 $y_0$ 切空间中的向量 $v$，它的方向指向 $y_1$，且长度等于弧长 $\theta$。这完全符合对数映射的抽象定义。</p>
     <div class="formula-box">
         $$ \log_{y_0}(y_1) = \frac{\theta}{\sin\theta} \left( y_1 - (\cos\theta) y_0 \right) $$
     </div>
@@ -135,27 +186,20 @@
     <div class="svg-container">
         <svg width="400" height="250" viewBox="0 0 400 250">
             <title>对数映射的几何分解（修正版）</title>
-            <!-- Great Circle -->
             <circle cx="200" cy="125" r="100" fill="#f0f7ff" stroke="#aaccff" stroke-width="1"/>
-            <!-- Origin -->
             <circle cx="200" cy="125" r="3" fill="black"/>
             <text x="185" y="128" font-size="14">O</text>
-            <!-- Vectors y0, y1 -->
             <line x1="200" y1="125" x2="200" y2="25" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
             <text x="205" y="45" font-size="16" font-style="italic">y₀</text>
             <line x1="200" y1="125" x2="286.6" y2="75" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
             <text x="270" y="65" font-size="16" font-style="italic">y₁</text>
-            <!-- Tangent Space -->
             <line x1="120" y1="25" x2="280" y2="25" stroke="gray" stroke-width="1.5" stroke-dasharray="4"/>
             <text x="285" y="30" font-size="12" fill="gray">T<sub>y₀</sub>S<sup>n-1</sup></text>
-            <!-- Projection -->
             <line x1="286.6" y1="75" x2="250" y2="25" stroke="#007bff" stroke-width="1.5" stroke-dasharray="3"/>
             <text x="260" y="100" font-size="14">(cosθ)y₀</text>
             <path d="M 200 125 L 200 68" stroke="gray" stroke-width="1" />
-            <!-- u_perp vector -->
             <line x1="200" y1="68" x2="286.6" y2="75" stroke="#dc3545" stroke-width="2" marker-end="url(#arrow_red)"/>
             <text x="245" y="85" fill="#dc3545" font-size="14">y₁ - (cosθ)y₀</text>
-            <!-- Angle theta -->
             <path d="M 200 50 A 25 25, 0, 0, 1, 221.65 62.5" fill="none" stroke="#198754" stroke-width="1.5"/>
             <text x="215" y="55" fill="#198754" font-size="14">θ</text>
         </svg>
@@ -176,8 +220,8 @@
         </ol>
     </div>
 
-    <h2>3. 指数映射 (Exponential Map) 的推导</h2>
-    <p><strong>目标：</strong> 从起点 $y_0$ 出发，沿着切空间中的向量 $v$ 的方向，在球面上行进 $\|v\|$ 的距离，找到终点。</p>
+    <h2>5. 指数映射 (Exponential Map) 的推导 (球面)</h2>
+    <p><strong>目标：</strong> 从起点 $y_0$ 出发，沿着切空间中的向量 $v$ 的方向，在球面上行进 $\|v\|$ 的距离，找到终点。这正是指数映射抽象定义的具体化。</p>
     <div class="formula-box">
         $$ \exp_{y_0}(v) = (\cos\|v\|) y_0 + \left(\frac{\sin\|v\|}{\|v\|}\right) v $$
     </div>
@@ -185,25 +229,19 @@
     <div class="svg-container">
         <svg width="400" height="250" viewBox="0 0 400 250">
              <title>指数映射的几何分解（修正版）</title>
-             <!-- Great Circle -->
              <circle cx="200" cy="125" r="100" fill="#f0fff4" stroke="#a3d9b1" stroke-width="1"/>
-             <!-- Origin -->
              <circle cx="200" cy="125" r="3" fill="black"/>
              <text x="185" y="128" font-size="14">O</text>
-             <!-- Basis vectors -->
              <line x1="200" y1="125" x2="200" y2="25" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
              <text x="205" y="45" font-size="16" font-style="italic">y₀</text>
              <line x1="200" y1="25" x2="300" y2="25" stroke="#6c757d" stroke-width="2" marker-end="url(#arrow_gray)"/>
              <text x="240" y="20" font-size="16" font-style="italic">u = v/||v||</text>
-             <!-- Result vector -->
              <line x1="200" y1="125" x2="286.6" y2="75" stroke="#0d6efd" stroke-width="2.5" marker-end="url(#arrow_blue)"/>
              <text x="290" y="85" font-size="16" font-style="italic" fill="#0d6efd">y₁</text>
-             <!-- Components -->
              <line x1="200" y1="68" x2="286.6" y2="75" stroke="#198754" stroke-width="1.5" stroke-dasharray="4"/>
              <text x="290" y="55" fill="#198754" font-size="12">(sinα)u</text>
              <line x1="286.6" y1="125" x2="286.6" y2="75" stroke="#dc3545" stroke-width="1.5" stroke-dasharray="4"/>
              <text x="290" y="110" fill="#dc3545" font-size="12">(cosα)y₀</text>
-             <!-- Angle -->
              <path d="M 200 50 A 25 25, 0, 0, 1, 221.65 62.5" fill="none" stroke="purple" stroke-width="1.5"/>
              <text x="215" y="55" fill="purple" font-size="14">α=||v||</text>
         </svg>
@@ -224,8 +262,35 @@
         </ol>
     </div>
 
-    <h2>总结</h2>
-    <p>这些公式看起来复杂，但它们的本质都是将球面上的“旋转”和“弧线”问题，转化为我们熟悉的、在二维平面内的向量分解和三角函数问题。通过这种方式，我们可以在弯曲的流形上进行精确的、可计算的几何操作。</p>
+    <h2>6. 总结：欧氏空间 vs. 球面</h2>
+    <p>现在，我们可以清晰地看到两者的区别与联系。</p>
+    <table class="summary-table">
+        <thead>
+            <tr>
+                <th>概念</th>
+                <th>欧氏空间 (平坦)</th>
+                <th>单位球面 (弯曲)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>测地线</strong></td>
+                <td>直线</td>
+                <td>大圆弧</td>
+            </tr>
+            <tr>
+                <td><strong>指数映射 $\exp_p(v)$</strong></td>
+                <td>$p + v$ (向量加法)</td>
+                <td>$(\cos\|v\|) p + (\frac{\sin\|v\|}{\|v\|}) v$ (旋转与投影)</td>
+            </tr>
+            <tr>
+                <td><strong>对数映射 $\log_p(q)$</strong></td>
+                <td>$q - p$ (向量减法)</td>
+                <td>$\frac{\theta}{\sin\theta} (q - (\cos\theta) p)$ (投影与缩放)</td>
+            </tr>
+        </tbody>
+    </table>
+    <p><strong>核心结论：</strong>球面上的公式之所以引入了 $\cos, \sin$ 和角度 $\theta$，完全是为了处理因**曲率 (curvature)** 存在而导致的路径弯曲。欧氏空间因为曲率为零，所以这些修正项都消失了，映射关系回到了最简单的线性代数。你的方法巧妙之处就在于，它在需要处理弯曲时（在球面上插值），就使用球面公式；在可以简化时（在切空间中缩放向量），就利用切空间的平坦性。</p>
 </div>
 
 <svg height="0" width="0">
@@ -233,10 +298,9 @@
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" /></marker>
     <marker id="arrow_red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#dc3545"/></marker>
     <marker id="arrow_blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0d6efd"/></marker>
-    <marker id="arrow_gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6c757d"/></marker>
+    <marker id="arrow_gray" viewBox="0 tobi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6c757d"/></marker>
   </defs>
 </svg>
 
 </body>
 </html>
-

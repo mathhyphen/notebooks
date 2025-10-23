@@ -18,6 +18,7 @@
     <style>
         body {
             font-family: 'Noto Sans SC', sans-serif;
+            padding-left: calc(var(--sidebar-w) + 24px);
         }
         .section-card {
             background-color: #ffffff;
@@ -73,7 +74,7 @@
         pre.line-numbers { position: relative; padding-left: 3.5em; }
         .line-numbers .line-numbers-rows { border-right: 1px solid rgba(255,255,255,0.08); }
         /* CFM 布局与导航样式 */
-        :root { --panel: #ffffff; --text: #1f2937; --muted: #6b7280; --brand1: #0ea5e9; --brand2: #10b981; --brand3: #8b5cf6; --shadow: 0 10px 30px rgba(2, 6, 23, 0.12); }
+        :root { --panel: #ffffff; --text: #1f2937; --muted: #6b7280; --brand1: #0ea5e9; --brand2: #10b981; --brand3: #8b5cf6; --shadow: 0 10px 30px rgba(2, 6, 23, 0.12); --sidebar-w: 280px; }
         .hero { background: radial-gradient(1200px circle at 10% 0%, rgba(14,165,233,0.12), transparent 40%),
                  radial-gradient(1000px circle at 90% 0%, rgba(139,92,246,0.12), transparent 40%),
                  linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
@@ -82,10 +83,14 @@
         .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
         .subtitle { margin-top: 10px; color: var(--muted); }
         .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
-        .cfm-container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
-        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; }
+        .cfm-container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr; gap: 24px; }
+        .toc { position: fixed; left: 0; top: 0; width: var(--sidebar-w); height: 100vh; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border-right: 1px solid #e5e7eb; box-shadow: 4px 0 24px rgba(2,6,23,0.06); padding: 16px 12px; z-index: 1000; overflow-y: auto; }
         .toc h3 { margin: 0 0 10px; font-size: 16px; }
         .toc ul { list-style: none; padding: 0; margin: 0; }
+.toc a { display: block; padding: 8px 10px; border-radius: 8px; color: var(--text); transition: background-color .2s, color .2s; }
+.toc a:hover { background: #f1f5f9; color: var(--brand1); }
+.toc a.active { background: linear-gradient(90deg, #e0f2fe, #ede9fe); color: var(--brand1); }
+h2, h3 { scroll-margin-top: 20px; }
         .toc li { margin: 8px 0; }
     </style>
 </head>
@@ -185,6 +190,29 @@
             <p>本文档旨在为婴幼儿脑影像纵向分析提供精确的预处理工作流程。</p>
         </footer>
     </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const links = Array.from(document.querySelectorAll('.toc a'));
+    const decode = s => decodeURIComponent(s || '');
+    const ids = links.map(a => decode(a.getAttribute('href')).replace('#',''));
+    const headers = ids.map(id => document.getElementById(id)).filter(Boolean);
+    const active = id => {
+      links.forEach(a => {
+        const aid = decode(a.getAttribute('href')).replace('#','');
+        a.classList.toggle('active', aid === id);
+      });
+    };
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) active(e.target.id); });
+    }, { threshold: 0.6 });
+    headers.forEach(h => obs.observe(h));
+    links.forEach(a => a.addEventListener('click', () => {
+      const id = decode(a.getAttribute('href')).replace('#','');
+      active(id);
+    }));
+  });
+</script>
 
 </body>
 </html>

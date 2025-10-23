@@ -107,8 +107,8 @@
         .title { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; }
         .subtitle { margin-top: 10px; color: var(--muted); }
         .meta { margin-top: 14px; font-size: 14px; color: var(--muted); }
-        .container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
-        .toc { position: sticky; top: 24px; align-self: start; background: var(--panel); border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; }
+        .container { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr; gap: 24px; }
+        .toc { position: fixed; left: 0; top: 0; width: var(--sidebar-w); height: 100vh; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border-right: 1px solid #e5e7eb; box-shadow: 4px 0 24px rgba(2,6,23,0.06); padding: 16px 12px; z-index: 1000; overflow-y: auto; }
         .toc h3 { margin: 0 0 10px; font-size: 16px; }
         .toc ul { list-style: none; padding: 0; margin: 0; }
         .toc li { margin: 8px 0; }
